@@ -48,6 +48,10 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 - [x] Login admin gagal di browser dengan "The action you have requested is not allowed"
   (penyebab: `base_url` kosong/auto-detect → action form menarget host `[::1]`, cookie CSRF
   hilang. Fixed: `base_url` eksplisit di `config.php`; dicatat di AGENTS.md)
+- [x] Halaman detail produk menampilkan warning "Undefined array key category_slug"
+  (PHP 8): breadcrumb memakai `$product['category_slug']` tapi `Product_model::getDetail()`
+  hanya memilih `category_name`. Fixed: tambah `categories.slug AS category_slug`;
+  semua 8 halaman detail diuji ulang — 200 tanpa error
 
 ## 9. Fitur tambahan
 - [x] Tombol chat WhatsApp mengambang di semua halaman publik (kanan-bawah),

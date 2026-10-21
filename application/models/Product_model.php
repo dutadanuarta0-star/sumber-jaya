@@ -69,7 +69,7 @@ class Product_model extends CI_Model {
 	public function getDetail($id)
 	{
 		$product = $this->db
-			->select('products.*, categories.name AS category_name', FALSE)
+			->select('products.*, categories.name AS category_name, categories.slug AS category_slug', FALSE)
 			->join('categories', 'categories.id = products.category_id', 'left')
 			->where('products.id', (int) $id)
 			->get('products')
