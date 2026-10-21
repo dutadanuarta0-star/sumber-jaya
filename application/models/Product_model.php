@@ -10,11 +10,12 @@ class Product_model extends CI_Model {
 	 * Daftar produk aktif untuk katalog.
 	 * Menyertakan nama kategori, harga terendah, dan total stok (agregasi varian).
 	 *
-	 * @param	int|null $categoryId Filter kategori (NULL = semua)
-	 * @param	int       $limit      0 = tanpa limit
+	 * @param	int|null    $categoryId Filter kategori (NULL = semua)
+	 * @param	int         $limit      0 = tanpa limit
+	 * @param	string|null $search     Kata kunci nama produk (NULL/'' = semua)
 	 * @return	array
 	 */
-	public function getPublished($categoryId = NULL, $limit = 0)
+	public function getPublished($categoryId = NULL, $limit = 0, $search = NULL)
 	{
 		$this->db
 			->select('products.*, categories.name AS category_name, MIN(product_variants.price) AS min_price, SUM(product_variants.stock) AS total_stock', FALSE)
@@ -25,6 +26,12 @@ class Product_model extends CI_Model {
 		if ($categoryId)
 		{
 			$this->db->where('products.category_id', (int) $categoryId);
+		}
+
+		// Pencarian nama produk; like() CI3 meng-escape wildcard pengguna.
+		if ($search !== NULL AND $search !== '')
+		{
+			$this->db->like('products.name', $search);
 		}
 
 		$this->db->group_by('products.id')->order_by('products.id', 'DESC');

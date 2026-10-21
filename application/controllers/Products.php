@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Products extends Public_Controller {
 
 	/**
-	 * Katalog produk, dengan filter opsional ?kategori=slug.
+	 * Katalog produk, dengan filter opsional ?kategori=slug dan pencarian ?q=kata.
 	 */
 	public function index()
 	{
@@ -18,6 +18,13 @@ class Products extends Public_Controller {
 
 		$activeCategory = NULL;
 		$slug = (string) $this->input->get('kategori', TRUE);
+		$search = trim((string) $this->input->get('q', TRUE));
+
+		// Batasi panjang kata kunci agar query tetap wajar.
+		if (mb_strlen($search) > 100)
+		{
+			$search = mb_substr($search, 0, 100);
+		}
 
 		if ($slug !== '')
 		{
@@ -32,8 +39,9 @@ class Products extends Public_Controller {
 
 		$data = array(
 			'pageTitle'      => 'Produk',
-			'products'       => $this->Product_model->getPublished($activeCategory ? $activeCategory['id'] : NULL),
+			'products'       => $this->Product_model->getPublished($activeCategory ? $activeCategory['id'] : NULL, 0, $search),
 			'activeCategory' => $activeCategory,
+			'search'         => $search,
 		);
 
 		$this->render('products/index', $data);

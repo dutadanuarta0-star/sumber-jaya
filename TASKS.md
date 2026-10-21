@@ -69,3 +69,16 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
   (HTML/Tailwind, tanpa library): `dailyUnique()` kini mengembalikan deret 7 hari
   lengkap urut lama→baru dengan hari kosong = 0; bar hari ini disorot, tooltip
   tanggal + jumlah; uji live lulus (data 20 Oct = 96, 21 Oct = 1, 5 hari lain = 0)
+- [x] Pencarian produk: kolom cari di navbar (semua halaman publik, desktop + mobile)
+  dan halaman katalog; parameter `?q=` bisa digabung dengan `?kategori=`,
+  `like()` Query Builder (wildcard di-escape), chip kategori mempertahankan kata
+  kunci, hasil kosong diberi pesan + tautan hapus pencarian. Uji lulus: arabika=4,
+  ROBUSTA=2 (case-insensitive), besemah=1, zzz=0, q=% aman, XSS ter-escape,
+  gabungan kategori+pencarian benar
+- [x] Hero beranda jadi slider: 3 slide (fade 700ms), panah + dots, auto-geser
+  6 detik, berhenti saat hover/fokus, hormati `prefers-reduced-motion`;
+  vanilla JS inline (tanpa library), konten dari array `$heroSlides` di
+  `views/home.php`; slide non-aktif `inert` + `aria-hidden`
+- [x] Gambar produk "kopi Besemah" (id 6): foto asli dataran tinggi Pagaralam
+  (Wikimedia Commons, CC BY-SA 4.0 — kredit di deskripsi),
+  file `assets/img/produk/kopi-besemah.jpg`

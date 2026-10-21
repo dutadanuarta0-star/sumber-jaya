@@ -22,6 +22,12 @@
 				<a href="<?= site_url('about') ?>" class="hover:text-amber-700">Tentang Kami</a>
 			</nav>
 
+			<form action="<?= site_url('products') ?>" method="get" class="hidden md:block">
+				<input type="search" name="q" maxlength="100" placeholder="Cari produk..."
+				       value="<?= esc((string) $this->input->get('q', TRUE), 'attr') ?>"
+				       class="w-36 lg:w-52 border border-stone-300 rounded-md px-3 py-1.5 text-sm">
+			</form>
+
 			<a href="<?= site_url('cart') ?>" class="relative inline-flex items-center gap-2 text-sm px-3 py-2 rounded-md bg-amber-800 text-white hover:bg-amber-900">
 				Keranjang
 				<?php if ($cartCount > 0): ?>
@@ -35,6 +41,12 @@
 			<a href="<?= site_url('products') ?>" class="hover:text-amber-700">Produk</a>
 			<a href="<?= site_url('about') ?>" class="hover:text-amber-700">Tentang Kami</a>
 		</nav>
+
+		<form action="<?= site_url('products') ?>" method="get" class="md:hidden pb-3">
+			<input type="search" name="q" maxlength="100" placeholder="Cari produk..."
+			       value="<?= esc((string) $this->input->get('q', TRUE), 'attr') ?>"
+			       class="w-full border border-stone-300 rounded-md px-3 py-1.5 text-sm">
+		</form>
 	</div>
 </header>
 
