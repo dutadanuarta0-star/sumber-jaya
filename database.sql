@@ -22,6 +22,24 @@ CREATE TABLE IF NOT EXISTS `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ---------------------------------------------------------------------
+-- Slider hero beranda (dikelola dari admin > Slider Beranda)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `hero_slides` (
+  `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `label`      VARCHAR(100) NULL DEFAULT NULL,
+  `title`      VARCHAR(150) NOT NULL,
+  `text`       VARCHAR(300) NULL DEFAULT NULL,
+  `image_url`  VARCHAR(500) NULL DEFAULT NULL,
+  `cta_text`   VARCHAR(50) NULL DEFAULT NULL,
+  `cta_url`    VARCHAR(255) NULL DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `is_active`  TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_hero_slides_order` (`sort_order`, `is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------------------------------
 -- Produk (harga & stok ada di varian, produk wajib punya minimal 1 varian)
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `products` (
@@ -118,6 +136,11 @@ INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `created_at`) VAL
 (2, 'Robusta',   'robusta',   'Kopi robusta dengan body tebal dan kafein tinggi.',     NOW()),
 (3, 'Blend',     'blend',     'Campuran biji kopi untuk rasa yang seimbang.',           NOW()),
 (4, 'Kopi Instan', 'kopi-instan', 'Praktis dan cepat diseduh untuk keseharian.',        NOW());
+
+INSERT INTO `hero_slides` (`label`, `title`, `text`, `image_url`, `cta_text`, `cta_url`, `sort_order`, `is_active`, `created_at`) VALUES
+('Roasted fresh every week', 'Kopi pilihan dari petani lokal Indonesia', 'Dari Gayo sampai Toraja. Pilih ukuran favoritmu, tambahkan ke keranjang, lalu checkout langsung lewat WhatsApp.', NULL, 'Lihat Katalog', 'products', 1, 1, NOW()),
+('Dari dataran tinggi', 'Arabika, Robusta, sampai kopi Besemah', 'Setiap biji dipilih dari petani lokal Indonesia dan disangrai segar agar rasanya konsisten di setiap seduhan.', NULL, 'Tentang Kami', 'about', 2, 1, NOW()),
+('Pesan tanpa ribet', 'Checkout langsung lewat WhatsApp', 'Pilih varian favoritmu, tambahkan ke keranjang, dan pesan dalam hitungan menit - tanpa perlu daftar akun.', NULL, 'Mulai Belanja', 'products', 3, 1, NOW());
 
 INSERT INTO `products` (`id`, `category_id`, `name`, `slug`, `description`, `image_url`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Arabika Gayo', 'arabika-gayo', 'Biji kopi arabika dari dataran tinggi Gayo, Aceh. Rasa cokelat gelap dengan aroma bunga dan sedikit keasaman jeruk.', 'https://placehold.co/600x400/6f4e37/ffffff?text=Arabika+Gayo', 1, NOW(), NOW()),
