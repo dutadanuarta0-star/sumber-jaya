@@ -66,5 +66,7 @@ $route['translate_uri_dashes'] = FALSE;
 */
 $route['admin'] = 'admin/dashboard';
 $route['admin/logout'] = 'admin/login/logout';
+$route['admin/account'] = 'admin/settings/account';
+$route['admin/accountUpdate'] = 'admin/settings/accountUpdate';
 $route['admin/products/edit/(:num)'] = 'admin/products/edit/$1';
 $route['admin/categories/edit/(:num)'] = 'admin/categories/edit/$1';

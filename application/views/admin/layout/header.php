@@ -27,11 +27,17 @@
 		<?php
 		// Menu admin; item aktif ditandai dari segmen URI pertama setelah "admin".
 		$activeMenu = $this->uri->segment(2, 'dashboard');
+		// Halaman ubah akun berada di bawah settings (admin/settings/account).
+		if ($activeMenu === 'settings' && $this->uri->segment(3) === 'account')
+		{
+			$activeMenu = 'account';
+		}
 		$menus = array(
 			'dashboard'  => 'Dashboard',
 			'products'   => 'Produk',
 			'categories' => 'Kategori',
 			'settings'   => 'Pengaturan Toko',
+			'account'    => 'Ubah Akun',
 		);
 		?>
 		<nav class="bg-white border border-stone-200 rounded-lg overflow-hidden">

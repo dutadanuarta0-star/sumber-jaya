@@ -20,30 +20,50 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-	<?php // --- Pengunjung unik per hari (7 hari) ------------------------ ?>
+	<?php // --- Chart pengunjung unik per hari (7 hari terakhir) --------- ?>
 	<div class="bg-white border border-stone-200 rounded-lg p-5">
-		<h2 class="font-semibold mb-4">Pengunjung unik per hari</h2>
+		<h2 class="font-semibold mb-4">Pengunjung unik 7 hari terakhir</h2>
 
-		<?php if ( ! $dailyVisitors): ?>
+		<?php
+		// Skala chart: bar tertinggi = 85% tinggi area agar label angka
+		// di atas bar tetap muat; hari tanpa kunjungan dapat stub kecil.
+		$maxVisits = 0;
+		$totalVisits = 0;
+		foreach ($dailyVisitors as $day)
+		{
+			$maxVisits = max($maxVisits, (int) $day['visitors']);
+			$totalVisits += (int) $day['visitors'];
+		}
+		$today = date('Y-m-d');
+		?>
+
+		<?php if ($totalVisits === 0): ?>
 			<p class="text-sm text-stone-500">Belum ada data kunjungan.</p>
 		<?php else: ?>
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="text-left text-stone-500 border-b border-stone-200">
-						<th class="py-2 font-medium">Tanggal</th>
-						<th class="py-2 font-medium text-right">Pengunjung</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ($dailyVisitors as $day): ?>
-						<tr class="border-b border-stone-100 last:border-b-0">
-							<td class="py-2"><?= esc(date('d M Y', strtotime($day['day']))) ?></td>
-							<td class="py-2 text-right font-medium"><?= (int) $day['visitors'] ?></td>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		<?php endif; ?>
+			<div class="flex items-end gap-2 h-40" role="img" aria-label="Chart pengunjung unik 7 hari terakhir">
+				<?php foreach ($dailyVisitors as $day): ?>
+					<?php
+					$isToday = ($day['day'] === $today);
+					$height  = max(2, (int) round((int) $day['visitors'] / $maxVisits * 85));
+					?>
+					<div class="flex-1 h-full flex flex-col justify-end items-center"
+					     title="<?= esc($day['label'].' — '.$day['visitors'].' pengunjung') ?>">
+						<span class="text-xs mb-1 <?= $isToday ? 'font-semibold' : 'text-stone-500' ?>">
+							<?= (int) $day['visitors'] ?>
+						</span>
+						<div class="w-full max-w-10 rounded-t <?= $isToday ? 'bg-amber-800' : 'bg-amber-300' ?>"
+						     style="height: <?= $height ?>%"></div>
+					</div>
+				<?php endforeach ?>
+			</div>
+			<div class="flex gap-2 mt-2 border-t border-stone-100 pt-2">
+				<?php foreach ($dailyVisitors as $day): ?>
+					<span class="flex-1 text-center text-[11px] <?= $day['day'] === $today ? 'font-semibold text-stone-800' : 'text-stone-500' ?>">
+						<?= $day['day'] === $today ? 'Hari ini' : esc($day['label']) ?>
+					</span>
+				<?php endforeach ?>
+			</div>
+		<?php endif ?>
 	</div>
 
 	<?php // --- Produk paling sering dilihat --------------------------- ?>

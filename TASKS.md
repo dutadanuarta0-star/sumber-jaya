@@ -57,3 +57,15 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
   helper `img_src()` (path lokal → base_url), field Gambar form admin menerima
   path lokal atau URL https, validasi `regex_match` — uji e2e lulus (tolak `../x.jpg`,
   terima path assets, render + akses file OK)
+- [x] Ubah username & password admin — halaman "Ubah Akun" (`admin/settings/account`,
+  metode `account`/`accountUpdate` di controller Settings): wajib password saat ini,
+  password baru min 8 karakter + konfirmasi, cek username kembar, `password_hash()`.
+  Uji e2e lulus (password salah ditolak, password pendek ditolak, ubah sukses,
+  login kredensial baru sukses, dikembalikan ke `admin`/`admin123`)
+- [x] Perbaikan: menu sidebar "Ubah Akun" menaut ke `admin/account` (404) — ditambahkan
+  rute eksplisit `admin/account` & `admin/accountUpdate` di `routes.php`; halaman
+  terbuka 200, menu aktif tersorot, alur ubah password lewat menu lulus uji
+- [x] Dashboard: kunjungan 7 hari terakhir diubah dari tabel menjadi bar chart
+  (HTML/Tailwind, tanpa library): `dailyUnique()` kini mengembalikan deret 7 hari
+  lengkap urut lama→baru dengan hari kosong = 0; bar hari ini disorot, tooltip
+  tanggal + jumlah; uji live lulus (data 20 Oct = 96, 21 Oct = 1, 5 hari lain = 0)

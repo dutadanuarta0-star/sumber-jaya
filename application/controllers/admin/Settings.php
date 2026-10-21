@@ -11,6 +11,7 @@ class Settings extends Admin_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('Admin_model');
 	}
 
 	public function index()
@@ -51,5 +52,81 @@ class Settings extends Admin_Controller {
 			'pageTitle' => 'Pengaturan Toko',
 			'store'     => $this->storeData,
 		));
+	}
+
+	/**
+	 * Form ubah username & password admin yang sedang login.
+	 *
+	 * Password saat ini wajib diverifikasi sebelum perubahan disimpan.
+	 */
+	public function account()
+	{
+		$adminId = (int) $this->session->userdata('adminId');
+		$admin = $this->Admin_model->getById($adminId);
+
+		// Sesi basi (admin dihapus) — paksa keluar.
+		if ( ! $admin)
+		{
+			redirect('admin/logout');
+			return;
+		}
+
+		$this->form_validation->set_rules('username', 'Username', 'trim|required|max_length[50]');
+		$this->form_validation->set_rules('current_password', 'Password saat ini', 'trim|required');
+		$this->form_validation->set_rules('new_password', 'Password baru', 'trim|min_length[8]|max_length[255]');
+		$this->form_validation->set_rules('confirm_password', 'Ulangi password baru', 'trim|matches[new_password]');
+
+		$formError = '';
+
+		if ($this->form_validation->run() === TRUE)
+		{
+			$username = (string) $this->input->post('username', TRUE);
+			$newPassword = (string) $this->input->post('new_password', TRUE);
+
+			// Verifikasi password saat ini SEBELUM ada perubahan tersimpan.
+			if ( ! password_verify((string) $this->input->post('current_password', TRUE), $admin['password_hash']))
+			{
+				$formError = 'Password saat ini salah. Perubahan tidak disimpan.';
+			}
+			elseif ($this->Admin_model->usernameExists($username, $adminId))
+			{
+				$formError = 'Username tersebut sudah dipakai admin lain.';
+			}
+			else
+			{
+				$this->Admin_model->updateAccount(
+					$adminId,
+					$username,
+					$newPassword !== '' ? password_hash($newPassword, PASSWORD_DEFAULT) : NULL
+				);
+
+				$this->session->set_flashdata('success', $newPassword !== ''
+					? 'Username dan password berhasil diubah.'
+					: 'Username berhasil diubah.');
+				redirect('admin/settings/account');
+				return;
+			}
+		}
+
+		// Gagal validasi/manual: render ulang form dengan input yang sudah diisi.
+		$this->renderAdmin('admin/settings/account', array(
+			'pageTitle' => 'Ubah Akun',
+			'admin'     => $admin,
+			'formError' => $formError,
+		));
+	}
+
+	/**
+	 * Proses form ubah akun (POST).
+	 */
+	public function accountUpdate()
+	{
+		if ($this->input->method() !== 'post')
+		{
+			redirect('admin/settings/account');
+			return;
+		}
+
+		$this->account();
 	}
 }

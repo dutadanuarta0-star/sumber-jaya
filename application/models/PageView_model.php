@@ -45,18 +45,40 @@ class PageView_model extends CI_Model {
 	/**
 	 * Pengunjung unik per hari untuk N hari terakhir.
 	 *
-	 * @return	array Baris: array('day' => 'Y-m-d', 'visitors' => int)
+	 * Selalu mengembalikan N baris urut lama -> baru (termasuk hari ini),
+	 * hari tanpa kunjungan diisi 0 agar siap digambar sebagai chart.
+	 *
+	 * @return	array Baris: array('day' => 'Y-m-d', 'label' => 'd M', 'visitors' => int)
 	 */
 	public function dailyUnique($days = 7)
 	{
-		$since = date('Y-m-d 00:00:00', strtotime('-'.((int) $days - 1).' days'));
+		$days = (int) $days;
+		$since = date('Y-m-d 00:00:00', strtotime('-'.($days - 1).' days'));
 
-		return $this->db
+		$rows = $this->db
 			->select('DATE(created_at) AS day, COUNT(DISTINCT visitor_id) AS visitors', FALSE)
 			->where('created_at >=', $since)
 			->group_by('day')
-			->order_by('day', 'DESC')
 			->get('page_views')
 			->result_array();
+
+		$byDay = array();
+		foreach ($rows as $row)
+		{
+			$byDay[$row['day']] = (int) $row['visitors'];
+		}
+
+		$series = array();
+		for ($i = $days - 1; $i >= 0; $i--)
+		{
+			$date = date('Y-m-d', strtotime('-'.$i.' days'));
+			$series[] = array(
+				'day'      => $date,
+				'label'    => date('d M', strtotime($date)),
+				'visitors' => isset($byDay[$date]) ? $byDay[$date] : 0,
+			);
+		}
+
+		return $series;
 	}
 }
