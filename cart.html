@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Keranjang — Sumber Jaya</title>
+	<meta name="description" content="Sumber Jaya adalah toko kopi yang menyediakan biji kopi pilihan dari petani lokal Indonesia.">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>[x-cloak]{display:none}</style>
+</head>
+<body class="bg-stone-50 text-stone-800 flex flex-col min-h-screen">
+
+<header class="bg-white border-b border-stone-200 sticky top-0 z-10">
+	<div class="max-w-5xl mx-auto px-4">
+		<div class="flex items-center justify-between h-16 gap-4">
+			<a href="http://[::1]/Sumber jaya/" class="font-bold text-lg text-amber-900">Sumber Jaya</a>
+
+			<nav class="hidden sm:flex items-center gap-6 text-sm">
+				<a href="http://[::1]/Sumber jaya/" class="hover:text-amber-700">Beranda</a>
+				<a href="http://[::1]/Sumber jaya/products" class="hover:text-amber-700">Produk</a>
+				<a href="http://[::1]/Sumber jaya/about" class="hover:text-amber-700">Tentang Kami</a>
+			</nav>
+
+			<a href="http://[::1]/Sumber jaya/cart" class="relative inline-flex items-center gap-2 text-sm px-3 py-2 rounded-md bg-amber-800 text-white hover:bg-amber-900">
+				Keranjang
+									<span class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-white text-amber-900 text-xs font-semibold">2</span>
+							</a>
+		</div>
+
+		<nav class="sm:hidden flex items-center gap-5 text-sm pb-3 overflow-x-auto">
+			<a href="http://[::1]/Sumber jaya/" class="hover:text-amber-700">Beranda</a>
+			<a href="http://[::1]/Sumber jaya/products" class="hover:text-amber-700">Produk</a>
+			<a href="http://[::1]/Sumber jaya/about" class="hover:text-amber-700">Tentang Kami</a>
+		</nav>
+	</div>
+</header>
+
+<main class="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+			<div class="mb-6 rounded-md bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">
+			Produk ditambahkan ke keranjang.		</div>
+	
+	
+	
+<h1 class="text-2xl font-bold mb-6">Keranjang Belanja</h1>
+
+	<div class="grid gap-6 lg:grid-cols-3">
+		<div class="lg:col-span-2 space-y-4">
+							<div class="bg-white border border-stone-200 rounded-lg p-4">
+					<div class="flex justify-between gap-4">
+						<div>
+							<a href="http://[::1]/Sumber jaya/products/detail/1" class="font-medium hover:text-amber-800">
+								Arabika Gayo							</a>
+							<p class="text-sm text-stone-500 mt-0.5">
+								Ukuran 100g &middot; Rp45.000 / pcs
+							</p>
+													</div>
+						<p class="font-semibold whitespace-nowrap">Rp90.000</p>
+					</div>
+
+					<div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-stone-100">
+						<form action="http://[::1]/Sumber jaya/cart/update" method="post" class="flex items-end gap-2">
+							
+<input type="hidden" name="csrf_test_name" value="13aceef8a13768ca9f68d7fe168b0f14" />
+							
+<input type="hidden" name="variant_id" value="1" />
+							<div>
+								<label for="qty-1" class="block text-xs text-stone-500 mb-1">Jumlah</label>
+								<input type="number" id="qty-1" name="qty" value="2"
+								       min="0" max="20"
+								       class="w-20 border border-stone-300 rounded-md px-2 py-1.5 text-sm">
+							</div>
+							<button type="submit" class="text-sm px-3 py-1.5 rounded-md border border-stone-300 hover:border-amber-700">
+								Perbarui
+							</button>
+							<span class="text-xs text-stone-500 pb-2">stok: 25</span>
+						</form>
+
+						<form action="http://[::1]/Sumber jaya/cart/remove" method="post">
+							
+<input type="hidden" name="csrf_test_name" value="13aceef8a13768ca9f68d7fe168b0f14" />
+							
+<input type="hidden" name="variant_id" value="1" />
+							<button type="submit" class="text-sm text-red-600 hover:underline">Hapus</button>
+						</form>
+					</div>
+				</div>
+			
+			<form action="http://[::1]/Sumber jaya/cart/clear" method="post">
+				
+<input type="hidden" name="csrf_test_name" value="13aceef8a13768ca9f68d7fe168b0f14" />
+				<button type="submit" class="text-sm text-stone-500 hover:text-red-600 hover:underline">Kosongkan keranjang</button>
+			</form>
+		</div>
+
+		<div class="lg:col-span-1">
+			<div class="bg-white border border-stone-200 rounded-lg p-5 sticky top-24">
+				<h2 class="font-semibold mb-4">Ringkasan Pesanan</h2>
+
+				<div class="flex justify-between text-sm mb-2">
+					<span class="text-stone-600">Subtotal</span>
+					<span class="font-semibold">Rp90.000</span>
+				</div>
+				<p class="text-xs text-stone-500 mb-5">
+					Ongkos kirim dan total akhir dikonfirmasi oleh admin lewat WhatsApp.
+				</p>
+
+									<form action="http://[::1]/Sumber jaya/cart/checkout" method="post">
+						
+<input type="hidden" name="csrf_test_name" value="13aceef8a13768ca9f68d7fe168b0f14" />
+						<button type="submit" class="w-full bg-green-600 text-white font-semibold px-4 py-2.5 rounded-md hover:bg-green-700">
+							Checkout via WhatsApp
+						</button>
+					</form>
+				
+				<a href="http://[::1]/Sumber jaya/products" class="block text-center text-sm text-amber-800 hover:underline mt-4">
+					Lanjut belanja
+				</a>
+			</div>
+		</div>
+	</div>
+</main>
+
+<footer class="bg-stone-800 text-stone-300 text-sm mt-8">
+	<div class="max-w-5xl mx-auto px-4 py-8 grid gap-6 sm:grid-cols-3">
+		<div>
+			<p class="font-semibold text-white mb-2">Sumber Jaya</p>
+			<p>Biji kopi pilihan dari petani lokal Indonesia.</p>
+		</div>
+		<div>
+			<p class="font-semibold text-white mb-2">Kontak</p>
+							<p>Telepon: 021-555-0123</p>
+										<p>Email: hello@sumberjaya.id</p>
+										<p>Jl. Kopi Raya No. 12, Jakarta</p>
+					</div>
+		<div>
+			<p class="font-semibold text-white mb-2">Navigasi</p>
+			<a href="http://[::1]/Sumber jaya/" class="block hover:text-white">Beranda</a>
+			<a href="http://[::1]/Sumber jaya/products" class="block hover:text-white">Produk</a>
+			<a href="http://[::1]/Sumber jaya/about" class="block hover:text-white">Tentang Kami</a>
+		</div>
+	</div>
+	<div class="border-t border-stone-700">
+		<p class="max-w-5xl mx-auto px-4 py-4 text-xs text-stone-400">
+			&copy; 2026 Sumber Jaya.
+			<a href="http://[::1]/Sumber jaya/admin/login" class="hover:text-stone-200">Login Admin</a>
+		</p>
+	</div>
+</footer>
+
+</body>
+</html>

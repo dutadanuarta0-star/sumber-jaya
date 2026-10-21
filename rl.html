@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login Admin — Sumber Jaya</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-100 min-h-screen flex items-center justify-center px-4">
+
+<div class="w-full max-w-sm">
+	<div class="text-center mb-6">
+		<h1 class="text-xl font-bold">Sumber Jaya</h1>
+		<p class="text-sm text-stone-500">Masuk ke panel admin</p>
+	</div>
+
+	<div class="bg-white border border-stone-200 rounded-lg p-6">
+		
+		
+					<div class="mb-4 rounded-md bg-amber-50 border border-amber-200 text-amber-900 px-3 py-2 text-sm">
+				Terlalu banyak percobaan gagal. Coba lagi dalam 15 menit.
+			</div>
+		
+		<form action="http://[::1]/Sumber jaya/admin/login" class="space-y-4" method="post" accept-charset="utf-8">
+                                                                    <input type="hidden" name="csrf_test_name" value="ea6cad6a15076b75573c519573e1e145" />
+			<div>
+				<label for="username" class="block text-sm font-medium mb-1.5">Username</label>
+				<input type="text" name="username" id="username" value="admin" autofocus
+				       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
+			</div>
+
+			<div>
+				<label for="password" class="block text-sm font-medium mb-1.5">Password</label>
+				<input type="password" name="password" id="password" class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
+			</div>
+
+			<button type="submit" class="w-full bg-amber-800 text-white font-semibold py-2.5 rounded-md hover:bg-amber-900">
+				Masuk
+			</button>
+		</form>	</div>
+
+	<p class="text-center text-xs text-stone-500 mt-4">
+		<a href="http://[::1]/Sumber jaya/" class="hover:underline">&larr; Kembali ke toko</a>
+	</p>
+</div>
+
+</body>
+</html>
