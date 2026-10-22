@@ -15,12 +15,14 @@ application/
   helpers/       app_helper.php     (esc(), rupiah(), img_src())
   libraries/     Cart_lib.php       (keranjang berbasis session), Image_upload.php (upload gambar)
   models/        Setting_model, Category_model, Product_model, PageView_model, Admin_model, Hero_slide_model
-  views/         layout/, home.php, products/, about.php, cart/, admin/
+  views/         layout/, home.php, home/desktop.php (bingkai desktop), products/, about.php, cart/, admin/
 system/          framework CI3 — SUDAH DI-PATCH (lihat bawah); jangan ditimpa rilis CI baru
 assets/css/design-system.css   token + komponen design system (WAJIB dimuat di semua view)
 assets/js/ds-tailwind-config.js konfigurasi token Tailwind (dimuat SETELAH script CDN Tailwind)
 assets/js/ds-ui.js              perilaku drawer menu mobile + fokus
+assets/js/ds-slider.js          inisialisasi slider hero (Swiper)
 assets/img/produk/  folder gambar produk (diisi manual, lihat konvensi "Gambar produk")
+assets/img/kategori/ folder gambar kategori (diisi manual, aturan sama)
 assets/img/slider/  folder gambar latar slider beranda (diisi manual, aturan sama)
 tools/verify.js   harness verifikasi tampilan (Chrome DevTools Protocol) — alat bantu, bukan aplikasi
 database.sql     skema + seed; membuat database `sumber_jaya` sendiri saat di-import
@@ -112,11 +114,20 @@ radius, dan pola komponen berasal dari sana. Ringkasan implementasi:
   3. `<link rel="stylesheet" href="assets/css/design-system.css">` — WAJIB setelah CDN agar
      kelas komponen menang saat specificity seri.
   4. Font Google: `Anton` (display) + `Space Mono` (mono) dengan `preconnect` + `display=swap`.
+  - Slider hero (Swiper 14) dimuat **kondisional** lewat `$useSwiper` (hanya halaman beranda):
+    CSS Swiper di `<head>` (setelah `ds-tailwind-config.js`, sebelum `design-system.css`),
+    JS Swiper + `assets/js/ds-slider.js` di akhir `<body>` (setelah Swiper termuat).
+- **Slider hero (Swiper)**: markup Swiper ada di `application/views/home.php` (view `home`),
+  konfigurasi + a11y di `assets/js/ds-slider.js`, gaya komponen `.ds-hero` di
+  `assets/css/design-system.css`. Aturan Swiper 14: kelas `swiper-pagination-bullets` menempel
+  pada elemen yang **sama** dengan `swiper-pagination` (bukan elemen anak) — jangan membuat
+  aturan `position` untuk `.swiper-pagination-bullets`, pagination akan jatuh ke dalam flow.
+  Fallback: sebelum/selain Swiper, `.ds-hero:not(.ds-hero--ready)` hanya menampilkan slide pertama.
 - **Kelas komponen `.ds-*`** (jangan ganti dengan utility Tailwind yang bentrok): `.ds-btn`
   (+ `--primary/--ghost/--light/--danger/--sm/--block`), `.ds-input`, `.ds-textarea`, `.ds-select`,
   `.ds-file`, `.ds-label`, `.ds-field`, `.ds-chip`, `.ds-badge`, `.ds-card`, `.ds-panel`, `.ds-table`
   (+ `--sticky/--fluid`), `.ds-table-wrap`, `.ds-alert`, `.ds-product-card`, `.ds-cat-card`,
-  `.ds-cta`, `.ds-feature`, `.ds-menu`, `.ds-drawer`, `.ds-icon-btn`, `.ds-display-*`.
+  `.ds-cta`, `.ds-feature`, `.ds-menu`, `.ds-drawer`, `.ds-icon-btn`, `.ds-hero`, `.ds-display-*`.
   Prinsip: **jangan menumpuk utility Tailwind yang bertabrakan dengan komponen `.ds-*`** di elemen
   yang sama (mis. `rounded-lg` pada `.ds-card`) — pakai modifier/variannya.
 - **Tipografi**: judul = Anton uppercase (`.ds-display-xl/lg/md`, `font-display`); body = Space Mono
@@ -152,6 +163,27 @@ $route['admin/products/edit/(:num)']   = 'admin/products/edit/$1';
 $route['admin/categories/edit/(:num)'] = 'admin/categories/edit/$1';
 $route['admin/slider/edit/(:num)']     = 'admin/slider/edit/$1';
 ```
+
+Rute beranda tampilan desktop (`/beranda-desktop`) juga eksplisit:
+
+```php
+$route['beranda-desktop']     = 'home/desktop';
+$route['beranda-desktop/isi'] = 'home/desktopIsi';
+```
+
+## Halaman beranda tampilan desktop (1440 × 900)
+
+`/beranda-desktop` menampilkan beranda di dalam bingkai 1440 × 900 (untuk pratinjau/screenshot).
+**Isi dimuat lewat `<iframe>`** ke `/beranda-desktop/isi`, bukan dibungkus dengan CSS biasa —
+media query Tailwind mengevaluasi lebar *jendela browser*, bukan lebar kotak, jadi tanpa iframe
+halaman ini akan ikut memakai layout mobile saat dibuka dari HP.
+
+- `Home::desktop()` → view `home/desktop` (shell: latar gelap + bingkai + iframe). Tidak merekam kunjungan.
+- `Home::desktopIsi()` → beranda asli (view `home` + layout standar) untuk konten iframe, tanpa `recordView()`.
+- Isi iframe setinggi 3676px digulir **di dalam** iframe; halaman luar tidak ikut bergeser.
+- Di layar sempit (< 1440px) halaman luar bisa digeser horizontal (`body` min-width 1440px).
+- Halaman ini sengaja **tanpa tautan** di footer — hanya dibuka lewat URL.
+- Verifikasi: `node tools/verify.js` **tidak** menguji route ini (overflow horizontal disengaja).
 
 ## Kredensial & data placeholder (harus diganti oleh pemilik)
 

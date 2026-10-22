@@ -69,5 +69,11 @@
 
 <script src="<?= base_url('assets/js/ds-ui.js') ?>"></script>
 
+<?php if ( ! empty($useSwiper)): ?>
+<!-- Swiper 14 + inisialisasi slider hero (harus setelah Swiper termuat). -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.js" referrerpolicy="no-referrer"></script>
+<script src="<?= base_url('assets/js/ds-slider.js') ?>"></script>
+<?php endif; ?>
+
 </body>
 </html>

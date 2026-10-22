@@ -13,6 +13,10 @@
 
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script src="<?= base_url('assets/js/ds-tailwind-config.js') ?>"></script>
+	<?php if ( ! empty($useSwiper)): ?>
+	<!-- Swiper 14 — slider hero beranda (dimuat hanya pada halaman yang memakainya). -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.css" referrerpolicy="no-referrer">
+	<?php endif; ?>
 	<link rel="stylesheet" href="<?= base_url('assets/css/design-system.css') ?>">
 </head>
 <body class="flex min-h-screen flex-col">
@@ -20,7 +24,7 @@
 <?php
 // Menu aktif ditentukan dari segmen URI pertama.
 $seg1    = (string) $this->uri->segment(1);
-$isHome  = ($seg1 === '' OR $seg1 === 'home' OR $seg1 === 'index');
+$isHome  = ($seg1 === '' OR $seg1 === 'home' OR $seg1 === 'index' OR $seg1 === 'beranda-desktop');
 $waLink  = 'https://wa.me/'.rawurlencode((string) $store['whatsapp_number']);
 $waText  = rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tentang produk.');
 ?>

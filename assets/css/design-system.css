@@ -1071,6 +1071,145 @@ body.ds-scroll-lock {
 }
 
 /* ==========================================================================
+   Hero slider (Swiper)
+   ========================================================================== */
+
+/* Fallback: sebelum Swiper siap (atau CDN diblokir) hanya slide pertama yang
+   tampil; tombol panah & titik navigasi disembunyikan. */
+.ds-hero:not(.ds-hero--ready) .swiper-slide {
+	display: none;
+}
+
+.ds-hero:not(.ds-hero--ready) .swiper-slide:first-child {
+	display: flex;
+}
+
+.ds-hero:not(.ds-hero--ready) .swiper-button-prev,
+.ds-hero:not(.ds-hero--ready) .swiper-button-next,
+.ds-hero:not(.ds-hero--ready) .swiper-pagination {
+	display: none;
+}
+
+/* Tombol panah: bulat, semi transparan di atas foto. */
+.ds-hero .swiper-button-prev,
+.ds-hero .swiper-button-next {
+	position: absolute;
+	top: 50%;
+	width: 44px;
+	height: 44px;
+	margin-top: -22px;
+	border-radius: var(--radius-pill);
+	background: rgba(58, 43, 37, .60);
+	color: var(--color-text-on-green);
+	transition: background-color var(--dur-micro) var(--ease-ds);
+}
+
+.ds-hero .swiper-button-prev {
+	left: 12px;
+	right: auto;
+}
+
+.ds-hero .swiper-button-next {
+	left: auto;
+	right: 12px;
+}
+
+.ds-hero .swiper-button-prev:hover,
+.ds-hero .swiper-button-next:hover {
+	background: rgba(58, 43, 37, .85);
+}
+
+.ds-hero .swiper-navigation-icon {
+	width: 14px;
+	height: 26px;
+}
+
+/* Titik navigasi: bulat kecil, rata tengah di bawah slide.
+   Catatan: pada Swiper 14 kelas `swiper-pagination-bullets` menempel pada elemen
+   yang sama dengan `swiper-pagination`, bukan elemen anak. */
+.ds-hero .swiper-pagination {
+	position: absolute;
+	bottom: 16px;
+	left: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+}
+
+.ds-hero .swiper-pagination-bullet {
+	width: 10px;
+	height: 10px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: var(--color-text-on-green);
+	opacity: .40;
+	transition: opacity var(--dur-micro) var(--ease-ds);
+}
+
+.ds-hero .swiper-pagination-bullet-active {
+	opacity: 1;
+}
+
+.ds-hero .swiper-pagination-bullet:focus-visible {
+	outline: 2px solid var(--color-accent-mint);
+	outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Halaman bingkai desktop (pratinjau 1440 x 900)
+   ========================================================================== */
+
+.ds-canvas-page {
+	min-width: 1440px;
+	min-height: 100vh;
+	background: var(--color-bg-frame);
+}
+
+.ds-canvas-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	width: 1440px;
+	margin: 0 auto;
+	padding: 16px 24px;
+	color: var(--color-text-on-green);
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: 1.2;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.ds-canvas-bar__title {
+	font-weight: 700;
+}
+
+.ds-canvas-bar__meta {
+	color: var(--color-accent-mint);
+}
+
+.ds-canvas-frame {
+	box-sizing: border-box;
+	width: 1440px;
+	height: 900px;
+	margin: 0 auto 32px;
+	background: var(--color-bg-page);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-lg), 0 0 0 1px rgba(242, 235, 221, .18);
+	overflow: hidden;
+}
+
+.ds-canvas-frame iframe {
+	display: block;
+	width: 1440px;
+	height: 900px;
+	border: 0;
+}
+
+/* ==========================================================================
    Aksesibilitas & motion
    ========================================================================== */
 

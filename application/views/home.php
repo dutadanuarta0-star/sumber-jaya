@@ -26,54 +26,51 @@ $heroColors = array('bg-ds-forest', 'bg-ds-frame', 'bg-ds-ink');
 $featureProduct = $featured ? $featured[0] : NULL;
 ?>
 
-<!-- ============ HERO (slider) ============ -->
-<section id="heroSlider" class="relative overflow-hidden rounded-xl bg-ds-forest" aria-roledescription="carousel" aria-label="Sorotan toko">
-	<div class="grid">
+<!-- ============ HERO (slider Swiper) ============ -->
+<section id="heroSlider" data-ds-hero
+         class="ds-hero swiper relative overflow-hidden rounded-xl bg-ds-forest"
+         aria-roledescription="carousel" aria-label="Sorotan toko">
+	<div class="swiper-wrapper">
 		<?php foreach ($heroSlides as $i => $slide): ?>
-			<div data-hero-slide
-			     class="col-start-1 row-start-1 transition-opacity duration-700 <?= $i === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none' ?>"
-			     aria-roledescription="slide"
-			     aria-label="Slide <?= $i + 1 ?> dari <?= count($heroSlides) ?>"
-			     aria-hidden="<?= $i === 0 ? 'false' : 'true' ?>"
-			     <?= $i === 0 ? '' : 'inert' ?>>
-				<?php
-				$ctaText = trim((string) $slide['cta_text']);
-				$ctaUrl  = trim((string) $slide['cta_url']);
+			<?php
+			$ctaText = trim((string) $slide['cta_text']);
+			$ctaUrl  = trim((string) $slide['cta_url']);
 
-				if ($ctaUrl !== '' && ! preg_match('#^https?://#i', $ctaUrl))
-				{
-					$ctaUrl = site_url($ctaUrl);
-				}
-				?>
-				<div class="relative <?= esc($heroColors[$i % count($heroColors)], 'attr') ?>">
-					<?php if ( ! empty($slide['image_url'])): ?>
-						<img src="<?= esc(img_src($slide['image_url']), 'attr') ?>" alt=""
-						     class="absolute inset-0 h-full w-full object-cover" aria-hidden="true">
-						<div class="absolute inset-0" style="background: var(--color-overlay)" aria-hidden="true"></div>
-					<?php endif; ?>
+			if ($ctaUrl !== '' && ! preg_match('#^https?://#i', $ctaUrl))
+			{
+				$ctaUrl = site_url($ctaUrl);
+			}
+			?>
+			<div class="swiper-slide relative flex min-h-[26rem] flex-col md:min-h-[32rem] <?= esc($heroColors[$i % count($heroColors)], 'attr') ?>"
+			     role="group" aria-roledescription="slide"
+			     aria-label="Slide <?= $i + 1 ?> dari <?= $heroTotal ?>">
+				<?php if ( ! empty($slide['image_url'])): ?>
+					<img src="<?= esc(img_src($slide['image_url']), 'attr') ?>" alt=""
+					     class="absolute inset-0 h-full w-full object-cover" aria-hidden="true">
+					<div class="absolute inset-0" style="background: var(--color-overlay)" aria-hidden="true"></div>
+				<?php endif; ?>
 
-					<div class="relative flex min-h-[26rem] items-end px-5 py-10 md:min-h-[32rem] md:items-center md:px-10 md:py-16">
-						<div class="w-full max-w-3xl">
-							<?php if (trim((string) $slide['label']) !== ''): ?>
-								<p class="ds-label mb-3 text-ds-mint"><?= esc($slide['label']) ?></p>
-							<?php endif; ?>
+				<div class="relative flex flex-1 items-end px-5 py-10 md:items-center md:px-10 md:py-16">
+					<div class="w-full max-w-3xl">
+						<?php if (trim((string) $slide['label']) !== ''): ?>
+							<p class="ds-label mb-3 text-ds-mint"><?= esc($slide['label']) ?></p>
+						<?php endif; ?>
 
-							<?php if ($i === 0): ?>
-								<h1 class="ds-display-xl mb-4 text-ds-on-forest"><?= esc($slide['title']) ?></h1>
-							<?php else: ?>
-								<h2 class="ds-display-xl mb-4 text-ds-on-forest"><?= esc($slide['title']) ?></h2>
-							<?php endif; ?>
+						<?php if ($i === 0): ?>
+							<h1 class="ds-display-xl mb-4 text-ds-on-forest"><?= esc($slide['title']) ?></h1>
+						<?php else: ?>
+							<h2 class="ds-display-xl mb-4 text-ds-on-forest"><?= esc($slide['title']) ?></h2>
+						<?php endif; ?>
 
-							<?php if (trim((string) $slide['text']) !== ''): ?>
-								<p class="ds-body ds-measure mb-6 text-ds-on-forest/85"><?= esc($slide['text']) ?></p>
-							<?php endif; ?>
+						<?php if (trim((string) $slide['text']) !== ''): ?>
+							<p class="ds-body ds-measure mb-6 text-ds-on-forest/85"><?= esc($slide['text']) ?></p>
+						<?php endif; ?>
 
-							<?php if ($ctaText !== '' && $ctaUrl !== ''): ?>
-								<a href="<?= esc($ctaUrl, 'attr') ?>" class="ds-btn ds-btn--light">
-									<?= esc($ctaText) ?>
-								</a>
-							<?php endif; ?>
-						</div>
+						<?php if ($ctaText !== '' && $ctaUrl !== ''): ?>
+							<a href="<?= esc($ctaUrl, 'attr') ?>" class="ds-btn ds-btn--light">
+								<?= esc($ctaText) ?>
+							</a>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
@@ -81,95 +78,11 @@ $featureProduct = $featured ? $featured[0] : NULL;
 	</div>
 
 	<?php if ($heroTotal > 1): ?>
-	<button type="button" data-hero-prev aria-label="Slide sebelumnya"
-	        class="absolute left-3 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-ds-frame/60 text-ds-on-forest transition-colors hover:bg-ds-frame/85">
-		<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-			<path d="M15 6l-6 6 6 6"/>
-		</svg>
-	</button>
-	<button type="button" data-hero-next aria-label="Slide berikutnya"
-	        class="absolute right-3 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-ds-frame/60 text-ds-on-forest transition-colors hover:bg-ds-frame/85">
-		<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-			<path d="M9 6l6 6-6 6"/>
-		</svg>
-	</button>
-
-	<div class="absolute inset-x-0 bottom-4 z-10 flex justify-center gap-1">
-		<?php foreach ($heroSlides as $i => $slide): ?>
-			<button type="button" data-hero-dot="<?= $i ?>" aria-label="Ke slide <?= $i + 1 ?>"
-			        aria-current="<?= $i === 0 ? 'true' : 'false' ?>"
-			        class="inline-flex h-7 w-7 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ds-mint">
-				<span class="h-2.5 w-2.5 rounded-full <?= $i === 0 ? 'bg-ds-on-forest' : 'bg-ds-on-forest/40' ?>"></span>
-			</button>
-		<?php endforeach; ?>
-	</div>
+	<div class="swiper-button-prev" role="button" aria-label="Slide sebelumnya"></div>
+	<div class="swiper-button-next" role="button" aria-label="Slide berikutnya"></div>
+	<div class="swiper-pagination"></div>
 	<?php endif; ?>
 </section>
-
-<script>
-(function () {
-	var root = document.getElementById('heroSlider');
-	if (!root) return;
-
-	var slides = root.querySelectorAll('[data-hero-slide]');
-	var dots = root.querySelectorAll('[data-hero-dot]');
-	var nextBtn = root.querySelector('[data-hero-next]');
-	var prevBtn = root.querySelector('[data-hero-prev]');
-	var index = 0;
-	var timer = null;
-	var intervalMs = 5000; // geser otomatis tiap 5 detik
-	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-	function show(n) {
-		index = (n + slides.length) % slides.length;
-
-		slides.forEach(function (slide, i) {
-			var active = (i === index);
-			slide.classList.toggle('opacity-0', !active);
-			slide.classList.toggle('pointer-events-none', !active);
-			slide.setAttribute('aria-hidden', active ? 'false' : 'true');
-			slide.toggleAttribute('inert', !active);
-		});
-
-		dots.forEach(function (dot, i) {
-			var active = (i === index);
-			var bullet = dot.querySelector('span');
-			bullet.classList.toggle('bg-ds-on-forest', active);
-			bullet.classList.toggle('bg-ds-on-forest/40', !active);
-			dot.setAttribute('aria-current', active ? 'true' : 'false');
-		});
-	}
-
-	function next() { show(index + 1); }
-	function prev() { show(index - 1); }
-	function stop() { if (timer) { clearInterval(timer); timer = null; } }
-	function start() {
-		if (reduceMotion) return;
-		stop();
-		timer = setInterval(next, intervalMs);
-	}
-
-	if (slides.length < 2 || ! nextBtn || ! prevBtn)
-	{
-		return;
-	}
-
-	nextBtn.addEventListener('click', function () { next(); start(); });
-	prevBtn.addEventListener('click', function () { prev(); start(); });
-
-	dots.forEach(function (dot, i) {
-		dot.addEventListener('click', function () { show(i); start(); });
-	});
-
-	// Berhenti saat kursor/fokus di atas slider, lanjut lagi setelahnya.
-	root.addEventListener('mouseenter', stop);
-	root.addEventListener('mouseleave', start);
-	root.addEventListener('focusin', stop);
-	root.addEventListener('focusout', start);
-
-	start();
-})();
-</script>
 
 <!-- ============ KATEGORI (kartu: gambar kiri, teks kanan) ============ -->
 <section class="mt-12 md:mt-16">

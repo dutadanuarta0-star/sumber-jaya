@@ -98,6 +98,31 @@ async function main() {
 		return res.result && res.result.result ? res.result.result.value : null;
 	};
 
+	/**
+	 * Navigasi lalu tunggu event `load` (bukan sleep tetap), supaya halaman
+	 * yang memuat aset dari CDN (mis. Swiper) tidak diukur sebelum selesai.
+	 */
+	const navigate = async (url, extraWait = 400) => {
+		const loaded = new Promise((resolve) => {
+			const onMessage = (ev) => {
+				const msg = JSON.parse(ev.data);
+				if (msg.method === 'Page.loadEventFired') {
+					ws.removeEventListener('message', onMessage);
+					resolve(true);
+				}
+			};
+			ws.addEventListener('message', onMessage);
+			setTimeout(() => {
+				ws.removeEventListener('message', onMessage);
+				resolve(false);
+			}, 10000);
+		});
+
+		await send('Page.navigate', { url });
+		await loaded;
+		await sleep(extraWait);
+	};
+
 	let failures = 0;
 
 	for (const vp of VIEWPORTS) {
@@ -106,8 +131,7 @@ async function main() {
 		});
 
 		for (const pg of PAGES) {
-			await send('Page.navigate', { url: BASE + pg.path });
-			await sleep(1400);
+			await navigate(BASE + pg.path);
 
 			const report = await evalJs(`(() => {
 				const cs = (el, prop) => el ? getComputedStyle(el).getPropertyValue(prop) : null;
@@ -178,8 +202,7 @@ async function main() {
 	if (adminUser && adminPass) {
 		console.log('\n--- Halaman admin ---');
 		await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
-		await send('Page.navigate', { url: BASE + '/admin/login' });
-		await sleep(1200);
+		await navigate(BASE + '/admin/login', 300);
 
 		const loginOk = await evalJs(`(() => {
 			const u = document.querySelector('#username');
@@ -203,8 +226,7 @@ async function main() {
 		];
 
 		for (const pg of ADMIN_PAGES) {
-			await send('Page.navigate', { url: BASE + pg.path });
-			await sleep(1100);
+			await navigate(BASE + pg.path, 300);
 			const r = await evalJs(`(() => {
 				const cs = (el, p) => el ? getComputedStyle(el).getPropertyValue(p) : null;
 				return {

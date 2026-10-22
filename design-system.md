@@ -314,6 +314,27 @@ Tidak ada di screenshot. **[ASUMSI]**, mengikuti bahasa visual:
 - **Badge logo "Co-Fi" di foto:** pill hijau pojok kiri-bawah foto hero; di mobile diperkecil (±40px).
 - **Doodle ilustrasi:** SVG line-art 1.5–2px stroke, warna `text-primary`. Dekoratif → `aria-hidden="true"`, `pointer-events: none`.
 
+### 7.8 Slider hero (Swiper)
+
+Slider utama beranda. Implementasi memakai **Swiper 14** (`swiper-bundle`), dimuat dari CDN
+hanya pada halaman yang memakainya.
+
+- **Wadah:** `section` ber-`role="region"` + `aria-roledescription="carousel"`, `aria-label` deskriptif,
+  radius `xl`, `overflow: hidden`, latar `forest`.
+- **Slide:** tiap slide punya tinggi minimum 416px (mobile) / 512px (≥768px); konten rata bawah di
+  mobile, rata tengah di desktop. Foto hero full-bleed + overlay `--color-overlay`.
+- **Navigasi:**
+  - Panah kiri/kanan — bulat 44px, bg `frame` 60% (hover 85%), ikon `on-green`, 12px dari tepi.
+  - Titik (pagination) — bulat 10px, `on-forest` 40%, aktif `on-forest` 100%, jarak 8px, 16px dari bawah.
+  - Penanda aktif diberi `aria-current="true"`; titik adalah `<button>` (bisa di-fokus & di-tekan).
+- **Perilaku:** geser otomatis tiap 5 detik (berhenti saat kursor di atas slider), loop, bisa di-drag
+  (swipe), bisa digeser dengan keyboard panah kiri/kanan saat slider difokus.
+- **Aksesibilitas:** slide aktif `aria-hidden="false"`, slide lain `aria-hidden="true"` + `inert`
+  (tidak bisa difokus); pesan a11y berbahasa Indonesia ("Slide sebelumnya", "Ke slide N").
+- **Fallback:** bila CDN gagal dimuat, hanya slide pertama yang tampil (tombol & titik disembunyikan)
+  — halaman tetap utuh.
+- **Reduced motion:** `prefers-reduced-motion: reduce` → autoplay mati dan durasi geser 0.
+
 ---
 
 ## 8. Layout
@@ -345,6 +366,17 @@ Tidak ada di screenshot. **[ASUMSI]**, mengikuti bahasa visual:
 - Gunakan `<img>` dengan `srcset`/`sizes`, format WebP/AVIF, `loading="lazy"` kecuali hero (`fetchpriority="high"`).
 - Selalu tentukan `width`/`height` atau `aspect-ratio` untuk mencegah layout shift.
 - Alt text deskriptif untuk foto produk dan orang; kosong (`alt=""`) untuk dekoratif.
+
+### 8.5 Halaman pratinjau desktop (1440 × 900)
+Halaman khusus untuk melihat beranda pada ukuran desktop tetap, berapa pun lebar jendela browser.
+
+- Latar luar `bg-frame` (cokelat gelap), `min-width: 1440px` → di layar sempit halaman digeser horizontal.
+- Bingkai: 1440 × 900, radius `lg`, shadow `lg`, hairline terang 1px, `overflow: hidden`.
+- Baris judul di atas bingkai: `label` uppercase (judul + ukuran "1440 × 900 px"), tanpa tautan.
+- **Isi dimuat lewat `<iframe>` 1440 × 900** — wajib, bukan pilihan: media query mengevaluasi lebar
+  jendela browser, bukan lebar wadah, sehingga tanpa iframe tampilan ini akan ikut memakai layout mobile.
+- Konten yang lebih panjang digulir di dalam iframe (seperti jendela browser), halaman luar tetap diam.
+- Halaman ini `noindex` dan tidak diberi tautan di footer — hanya dibuka lewat URL.
 
 ---
 

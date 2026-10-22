@@ -146,3 +146,39 @@ tidak ada perubahan controller/model/library/`config/`/`system/`/`database.sql`.
   benar), pencarian & filter kategori, CRUD admin (produk + varian, slider, pengaturan) —
   record uji dibuat lalu dihapus, jumlah data kembali ke baseline
 - [x] `AGENTS.md` diperbarui: struktur aset baru, konvensi token/design system, harness verifikasi
+
+## 11. Beranda tampilan desktop (1440 × 900)
+
+- [x] Halaman terpisah `/beranda-desktop` — beranda dalam bingkai 1440 × 900 (pratinjau/screenshot)
+- [x] Isi dimuat lewat `<iframe>` ke `/beranda-desktop/isi` (wajib: media query mengevaluasi lebar
+  jendela browser, bukan lebar wadah — tanpa iframe layout mobile ikut terpakai di HP)
+- [x] Rute eksplisit di `routes.php` (`beranda-desktop`, `beranda-desktop/isi`) karena CI3 membaca
+  segmen ke-2 sebagai controller
+- [x] Controller `Home::desktop()` (shell bingkai) + `Home::desktopIsi()` (isi beranda, tanpa
+  `recordView()` supaya statistik tidak dobel); view baru `views/home/desktop.php` berdiri sendiri
+- [x] CSS `.ds-canvas-page` / `.ds-canvas-bar` / `.ds-canvas-frame` di `design-system.css`;
+  `body` min-width 1440px → di layar sempit (< 1440px) halaman luar bisa digeser horizontal
+- [x] Halaman `noindex`, tanpa tautan di footer (hanya dibuka lewat URL)
+- [x] Uji (Chrome DevTools Protocol): bingkai selalu 1440 × 900 di outer 390/1440/1920 px; di dalam
+  iframe nav desktop tampil, burger mobile disembunyikan, kartu kategori 2 kolom, gambar di kiri;
+  tinggi isi 3676px digulir di dalam iframe, header sticky menempel di atas iframe; tanpa error konsol
+
+## 12. Slider hero pakai Swiper
+
+- [x] Slider hero beranda (dari admin > Slider Beranda) diganti dari JS manual (opacity + timer)
+  menjadi **Swiper 14** (`swiper-bundle`, CDN jsDelivr, versi dipin `14.3.0`)
+- [x] Markup Swiper di `application/views/home.php` (`swiper` / `swiper-wrapper` / `swiper-slide` /
+  `swiper-button-prev|next` / `swiper-pagination`); konfigurasi + a11y di `assets/js/ds-slider.js`
+- [x] Aset Swiper dimuat **kondisional** lewat `$useSwiper` (hanya beranda): CSS di `<head>`,
+  JS di akhir `<body>` — halaman lain tidak menambah bobot
+- [x] Gaya komponen `.ds-hero` di `design-system.css` (panah 44px `frame` 60%, titik 10px `on-forest`
+  40%/100% aktif, radius `xl`, fallback `.ds-hero--ready`)
+- [x] Perilaku: loop, autoplay 5 detik (berhenti saat kursor di atas), swipe/drag, keyboard panah,
+  `prefers-reduced-motion` → autoplay mati + durasi 0
+- [x] Aksesibilitas: slide aktif `aria-hidden="false"`, slide lain `aria-hidden="true"` + `inert`;
+  pesan berbahasa Indonesia ("Slide sebelumnya", "Slide berikutnya", "Ke slide N"); titik = `<button>`
+  dengan `aria-current`; panah punya `role="button"` + `aria-label`
+- [x] Fallback: bila CDN diblokir, hanya slide pertama tampil, tombol/titik disembunyikan —
+  halaman tetap utuh (diuji dengan memblokir `cdn.jsdelivr.net`)
+- [x] `tools/verify.js` diperbarui: menunggu event `Page.loadEventFired` (bukan sleep tetap)
+  supaya halaman beranda tidak diukur sebelum Swiper termuat — 30 pemeriksaan lulus, tanpa error konsol

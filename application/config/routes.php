@@ -71,3 +71,18 @@ $route['admin/accountUpdate'] = 'admin/settings/accountUpdate';
 $route['admin/products/edit/(:num)'] = 'admin/products/edit/$1';
 $route['admin/categories/edit/(:num)'] = 'admin/categories/edit/$1';
 $route['admin/slider/edit/(:num)'] = 'admin/slider/edit/$1';
+
+/*
+|--------------------------------------------------------------------------
+| Rute Beranda Tampilan Desktop
+|--------------------------------------------------------------------------
+|
+| /beranda-desktop     -> halaman bingkai 1440x900 (isi dimuat lewat iframe)
+| /beranda-desktop/isi -> isi beranda untuk iframe (tanpa bingkai)
+|
+| Rute eksplisit dipakai karena CI3 membaca segmen ke-2 sebagai controller,
+| bukan method dari controller di dalam folder.
+|
+*/
+$route['beranda-desktop'] = 'home/desktop';
+$route['beranda-desktop/isi'] = 'home/desktopIsi';
