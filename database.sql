@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `name`        VARCHAR(100) NOT NULL,
   `slug`        VARCHAR(120) NOT NULL,
   `description` VARCHAR(255) NULL DEFAULT NULL,
+  `image_url`   VARCHAR(500) NULL DEFAULT NULL,
   `created_at`  DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_categories_slug` (`slug`)
@@ -131,11 +132,11 @@ INSERT INTO `settings` (`id`, `store_name`, `whatsapp_number`, `phone`, `address
 (1, 'Sumber Jaya', '6281234567890', '021-555-0123', 'Jl. Kopi Raya No. 12, Jakarta', 'hello@sumberjaya.id',
  'Sumber Jaya adalah toko kopi yang menyediakan biji kopi pilihan dari petani lokal Indonesia. Kami memanggang (roasting) segar setiap minggu dan mengirimkannya langsung ke rumah Anda. Dari Gayo hingga Toraja, temukan kopi favoritmu di sini.');
 
-INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `created_at`) VALUES
-(1, 'Arabika',   'arabika',   'Biji kopi arabika dengan aroma dan rasa yang kompleks.', NOW()),
-(2, 'Robusta',   'robusta',   'Kopi robusta dengan body tebal dan kafein tinggi.',     NOW()),
-(3, 'Blend',     'blend',     'Campuran biji kopi untuk rasa yang seimbang.',           NOW()),
-(4, 'Kopi Instan', 'kopi-instan', 'Praktis dan cepat diseduh untuk keseharian.',        NOW());
+INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `image_url`, `created_at`) VALUES
+(1, 'Arabika',   'arabika',   'Biji kopi arabika dengan aroma dan rasa yang kompleks.', 'assets/img/produk/arabika-gayo.jpg', NOW()),
+(2, 'Robusta',   'robusta',   'Kopi robusta dengan body tebal dan kafein tinggi.',     'https://placehold.co/600x400/4e342e/ffffff?text=Robusta+Jawa', NOW()),
+(3, 'Blend',     'blend',     'Campuran biji kopi untuk rasa yang seimbang.',           'https://placehold.co/600x400/d7ccc8/4e342e?text=Blend+Kopi+Susu', NOW()),
+(4, 'Kopi Instan', 'kopi-instan', 'Praktis dan cepat diseduh untuk keseharian.',        'https://placehold.co/600x400/cd853f/ffffff?text=Kopi+Instan', NOW());
 
 INSERT INTO `hero_slides` (`label`, `title`, `text`, `image_url`, `cta_text`, `cta_url`, `sort_order`, `is_active`, `created_at`) VALUES
 ('Roasted fresh every week', 'Kopi pilihan dari petani lokal Indonesia', 'Dari Gayo sampai Toraja. Pilih ukuran favoritmu, tambahkan ke keranjang, lalu checkout langsung lewat WhatsApp.', NULL, 'Lihat Katalog', 'products', 1, 1, NOW()),
@@ -170,3 +171,20 @@ INSERT INTO `product_variants` (`product_id`, `label`, `price`, `stock`) VALUES
 (7, '500g', 125000, 9),
 (8, '10 sachet', 15000, 40),
 (8, '20 sachet', 28000, 35);
+
+-- ---------------------------------------------------------------------
+-- Upgrade database yang sudah ter-install (jalankan sekali):
+--
+--   ALTER TABLE `categories`
+--     ADD COLUMN `image_url` VARCHAR(500) NULL DEFAULT NULL AFTER `description`;
+--
+-- Gambar kategori bisa diisi manual lewat admin > Kategori, atau disalin
+-- dari gambar produk pertama tiap kategori:
+--
+--   UPDATE `categories` c
+--     SET c.image_url = (
+--       SELECT p.image_url FROM (SELECT * FROM `products`) p
+--       WHERE p.category_id = c.id AND p.image_url IS NOT NULL AND p.image_url <> ''
+--       ORDER BY p.id LIMIT 1
+--     );
+-- ---------------------------------------------------------------------

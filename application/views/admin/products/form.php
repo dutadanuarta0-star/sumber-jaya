@@ -2,26 +2,35 @@
 
 <?php // Form tambah/edit produk. Harga & stok diisi per varian. ?>
 
-<div class="flex items-center justify-between mb-5">
-	<h1 class="text-xl font-bold"><?= $isEdit ? 'Edit Produk' : 'Tambah Produk' ?></h1>
-	<a href="<?= site_url('admin/products') ?>" class="text-sm text-stone-500 hover:underline">&larr; Kembali</a>
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+	<h1 class="ds-display-md"><?= $isEdit ? 'Edit Produk' : 'Tambah Produk' ?></h1>
+	<a href="<?= site_url('admin/products') ?>" class="ds-nav-link">&larr; Kembali</a>
 </div>
 
 <?php if ( ! $hasCategory): ?>
-	<div class="rounded-md bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 text-sm mb-5">
-		Belum ada kategori. <a href="<?= site_url('admin/categories/create') ?>" class="underline font-medium">Tambah kategori dulu</a>.
+	<div class="ds-alert ds-alert--info mb-6">
+		<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+		</svg>
+		<span>Belum ada kategori. <a href="<?= site_url('admin/categories/create') ?>" class="underline underline-offset-4">Tambah kategori dulu</a>.</span>
 	</div>
 <?php endif; ?>
 
 <?php if (validation_errors()): ?>
-	<div class="rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-5">
-		<?= validation_errors() ?>
+	<div class="ds-alert ds-alert--error mb-6" role="alert">
+		<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+		</svg>
+		<span><?= validation_errors() ?></span>
 	</div>
 <?php endif; ?>
 
 <?php if ( ! empty($uploadError)): ?>
-	<div class="rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-5">
-		<?= esc($uploadError) ?>
+	<div class="ds-alert ds-alert--error mb-6" role="alert">
+		<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+		</svg>
+		<span><?= esc($uploadError) ?></span>
 	</div>
 <?php endif; ?>
 
@@ -30,20 +39,20 @@ $action = $isEdit ? site_url('admin/products/update/'.$product['id']) : site_url
 echo form_open_multipart($action, array('class' => 'space-y-6'));
 ?>
 
-<div class="bg-white border border-stone-200 rounded-lg p-5 space-y-4">
-	<h2 class="font-semibold">Informasi Produk</h2>
+<div class="ds-panel space-y-5">
+	<h2 class="ds-panel-title">Informasi Produk</h2>
 
 	<div class="grid gap-4 sm:grid-cols-2">
 		<div>
-			<label for="name" class="block text-sm font-medium mb-1.5">Nama produk <span class="text-red-600">*</span></label>
+			<label for="name" class="ds-label-text">Nama produk <span class="text-ds-danger">*</span></label>
 			<input type="text" name="name" id="name" maxlength="150"
 			       value="<?= esc($product ? $product['name'] : set_value('name')) ?>"
-			       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
+			       class="ds-input">
 		</div>
 
 		<div>
-			<label for="category_id" class="block text-sm font-medium mb-1.5">Kategori <span class="text-red-600">*</span></label>
-			<select name="category_id" id="category_id" class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
+			<label for="category_id" class="ds-label-text">Kategori <span class="text-ds-danger">*</span></label>
+			<select name="category_id" id="category_id" class="ds-select">
 				<option value="">— Pilih kategori —</option>
 				<?php foreach ($categories as $category): ?>
 					<option value="<?= (int) $category['id'] ?>"
@@ -56,109 +65,110 @@ echo form_open_multipart($action, array('class' => 'space-y-6'));
 	</div>
 
 	<div>
-		<label for="image_file" class="block text-sm font-medium mb-1.5">Upload gambar dari komputer</label>
-		<input type="file" name="image_file" id="image_file" accept="image/jpeg,image/png,image/webp"
-		       class="block w-full text-sm text-stone-600 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-800 file:text-white hover:file:bg-amber-900">
-		<p class="text-xs text-stone-500 mt-1">
+		<label for="image_file" class="ds-label-text">Upload gambar dari komputer</label>
+		<input type="file" name="image_file" id="image_file" accept="image/jpeg,image/png,image/webp" class="ds-file">
+		<p class="ds-caption mt-2 text-ds-ink-soft">
 			Pilih file JPG, PNG, atau WEBP (maksimal 3 MB). File yang dipilih akan menggantikan gambar lama.
 		</p>
 	</div>
 
 	<div>
-		<label for="image_url" class="block text-sm font-medium mb-1.5">Atau path / URL gambar yang sudah ada</label>
+		<label for="image_url" class="ds-label-text">Atau path / URL gambar yang sudah ada</label>
 		<input type="text" name="image_url" id="image_url" maxlength="500" placeholder="assets/img/produk/nama-gambar.jpg"
 		       value="<?= esc($product ? $product['image_url'] : set_value('image_url')) ?>"
-		       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-		<p class="text-xs text-stone-500 mt-1">
+		       class="ds-input">
+		<p class="ds-caption mt-2 text-ds-ink-soft">
 			Boleh dikosongkan jika memilih file di atas. Path server (<code>assets/img/produk/...</code>) atau URL
 			yang menunjuk langsung ke file gambar (<code>https://.../foto.jpg</code>) — bukan halaman web
 			(mis. halaman marketplace berakhiran <code>.html</code>).
 		</p>
 		<?php if ($product && ! empty($product['image_url'])): ?>
 			<img src="<?= esc(img_src($product['image_url']), 'attr') ?>" alt="Gambar saat ini"
-			     class="mt-2 h-28 w-40 object-cover rounded border border-stone-200">
+			     class="mt-3 h-28 w-40 rounded-md border border-ds-line object-cover">
 		<?php endif; ?>
 	</div>
 
 	<div>
-		<label for="description" class="block text-sm font-medium mb-1.5">Deskripsi</label>
+		<label for="description" class="ds-label-text">Deskripsi</label>
 		<textarea name="description" id="description" rows="4"
-		          class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm"><?= esc($product ? $product['description'] : set_value('description')) ?></textarea>
+		          class="ds-textarea"><?= esc($product ? $product['description'] : set_value('description')) ?></textarea>
 	</div>
 
-	<label class="inline-flex items-center gap-2 text-sm">
-		<input type="checkbox" name="is_active" value="1" class="accent-amber-800"
+	<label class="ds-label-text inline-flex items-center gap-2">
+		<input type="checkbox" name="is_active" value="1" class="ds-check"
 		       <?= ( ! $product OR (int) $product['is_active'] === 1) ? 'checked' : '' ?>>
 		Tampilkan produk di toko (aktif)
 	</label>
 </div>
 
-<div class="bg-white border border-stone-200 rounded-lg p-5">
-	<div class="flex items-start justify-between gap-4 mb-4">
+<div class="ds-panel">
+	<div class="mb-4 flex items-start justify-between gap-4">
 		<div>
-			<h2 class="font-semibold">Varian &amp; Stok</h2>
-			<p class="text-xs text-stone-500 mt-1">
+			<h2 class="ds-panel-title">Varian &amp; Stok</h2>
+			<p class="ds-caption mt-1 text-ds-ink-soft">
 				Minimal satu varian wajib diisi. Baris yang dibiarkan kosong akan diabaikan.
 			</p>
 		</div>
 	</div>
 
-	<div class="overflow-x-auto">
-		<table class="w-full text-sm" id="variantTable">
-			<thead class="text-left text-stone-500">
-				<tr>
-					<th class="py-2 font-medium w-1/2">Ukuran / Nama varian</th>
-					<th class="py-2 font-medium w-1/4">Harga (Rp)</th>
-					<th class="py-2 font-medium w-1/4">Stok</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php $variants = ($product AND isset($product['variants'])) ? $product['variants'] : array(); ?>
-
-				<?php foreach ($variants as $variant): ?>
+	<div class="ds-table-wrap">
+		<div class="ds-table-scroll">
+			<table class="ds-table ds-table--fluid" id="variantTable">
+				<thead>
 					<tr>
-						<td class="py-1.5 pr-3">
-							<input type="text" name="variant_label[]" maxlength="50" value="<?= esc($variant['label']) ?>"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
-						<td class="py-1.5 pr-3">
-							<input type="number" name="variant_price[]" min="0" step="500" value="<?= (int) $variant['price'] ?>"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
-						<td class="py-1.5">
-							<input type="number" name="variant_stock[]" min="0" value="<?= (int) $variant['stock'] ?>"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
+						<th class="w-1/2">Ukuran / Nama varian</th>
+						<th class="w-1/4">Harga (Rp)</th>
+						<th class="w-1/4">Stok</th>
 					</tr>
-				<?php endforeach; ?>
+				</thead>
+				<tbody>
+					<?php $variants = ($product AND isset($product['variants'])) ? $product['variants'] : array(); ?>
 
-				<?php // Baris kosong tambahan agar admin bisa langsung menambah varian baru. ?>
-				<?php for ($i = 0; $i < $emptyRows; $i++): ?>
-					<tr>
-						<td class="py-1.5 pr-3">
-							<input type="text" name="variant_label[]" maxlength="50" placeholder="contoh: 250g"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
-						<td class="py-1.5 pr-3">
-							<input type="number" name="variant_price[]" min="0" step="500" placeholder="0"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
-						<td class="py-1.5">
-							<input type="number" name="variant_stock[]" min="0" placeholder="0"
-							       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
-						</td>
-					</tr>
-				<?php endfor; ?>
-			</tbody>
-		</table>
+					<?php foreach ($variants as $variant): ?>
+						<tr>
+							<td class="py-2 pr-3">
+								<input type="text" name="variant_label[]" maxlength="50" value="<?= esc($variant['label']) ?>"
+								       class="ds-input ds-input--sm">
+							</td>
+							<td class="py-2 pr-3">
+								<input type="number" name="variant_price[]" min="0" step="500" value="<?= (int) $variant['price'] ?>"
+								       class="ds-input ds-input--sm">
+							</td>
+							<td class="py-2">
+								<input type="number" name="variant_stock[]" min="0" value="<?= (int) $variant['stock'] ?>"
+								       class="ds-input ds-input--sm">
+							</td>
+						</tr>
+					<?php endforeach; ?>
+
+					<?php // Baris kosong tambahan agar admin bisa langsung menambah varian baru. ?>
+					<?php for ($i = 0; $i < $emptyRows; $i++): ?>
+						<tr>
+							<td class="py-2 pr-3">
+								<input type="text" name="variant_label[]" maxlength="50" placeholder="contoh: 250g"
+								       class="ds-input ds-input--sm">
+							</td>
+							<td class="py-2 pr-3">
+								<input type="number" name="variant_price[]" min="0" step="500" placeholder="0"
+								       class="ds-input ds-input--sm">
+							</td>
+							<td class="py-2">
+								<input type="number" name="variant_stock[]" min="0" placeholder="0"
+								       class="ds-input ds-input--sm">
+							</td>
+						</tr>
+					<?php endfor; ?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 
-<div class="flex items-center gap-3">
-	<button type="submit" class="bg-amber-800 text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-amber-900">
+<div class="flex flex-wrap items-center gap-3">
+	<button type="submit" class="ds-btn ds-btn--primary">
 		<?= $isEdit ? 'Simpan Perubahan' : 'Simpan Produk' ?>
 	</button>
-	<a href="<?= site_url('admin/products') ?>" class="text-sm text-stone-500 hover:underline">Batal</a>
+	<a href="<?= site_url('admin/products') ?>" class="ds-btn ds-btn--ghost">Batal</a>
 </div>
 
 <?= form_close() ?>

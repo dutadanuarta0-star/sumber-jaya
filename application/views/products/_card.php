@@ -1,30 +1,39 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <?php // Kartu produk, dipakai beranda, katalog, dan produk terkait. ?>
-<a href="<?= site_url('products/detail/'.$product['id']) ?>"
-   class="bg-white border border-stone-200 rounded-lg overflow-hidden hover:border-amber-700 hover:shadow-sm flex flex-col">
-	<?php if ( ! empty($product['image_url'])): ?>
-		<img src="<?= esc(img_src($product['image_url'])) ?>" alt="<?= esc($product['name']) ?>" class="w-full h-40 object-cover bg-stone-100" loading="lazy"
-		     onerror="this.onerror=null;this.src='https://placehold.co/600x400/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
-	<?php else: ?>
-		<div class="w-full h-40 bg-stone-100 flex items-center justify-center text-stone-400 text-sm">Tanpa gambar</div>
-	<?php endif; ?>
+<article class="ds-product-card">
+	<a href="<?= site_url('products/detail/'.$product['id']) ?>" class="ds-product-card__link">
 
-	<div class="p-4 flex flex-col flex-1">
-		<p class="text-xs text-amber-800 mb-1"><?= esc((string) $product['category_name']) ?></p>
-		<p class="font-medium leading-snug mb-2"><?= esc($product['name']) ?></p>
-
-		<div class="mt-auto flex items-center justify-between">
-			<p class="font-semibold">
-				<?php if ($product['min_price'] !== NULL): ?>
-					<?= rupiah($product['min_price']) ?>
-					<span class="text-xs font-normal text-stone-500">/ mulai</span>
-				<?php else: ?>
-					<span class="text-sm text-stone-500">Harga belum diisi</span>
-				<?php endif; ?>
-			</p>
+		<span class="flex items-center justify-between gap-2">
+			<span class="ds-label text-ds-ink-soft"><?= esc((string) $product['category_name']) ?></span>
 			<?php if ((int) $product['total_stock'] <= 0): ?>
-				<span class="text-xs px-2 py-1 rounded bg-stone-200 text-stone-600">Habis</span>
+				<span class="ds-badge ds-badge--danger">Habis</span>
+			<?php endif; ?>
+		</span>
+
+		<h3 class="ds-title-sm text-center"><?= esc($product['name']) ?></h3>
+
+		<div class="ds-product-card__media">
+			<?php if ( ! empty($product['image_url'])): ?>
+				<img src="<?= esc(img_src($product['image_url']), 'attr') ?>" alt="<?= esc($product['name']) ?>"
+				     class="h-full w-full object-contain" loading="lazy" width="600" height="600"
+				     onerror="this.onerror=null;this.src='https://placehold.co/600x600/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
+			<?php else: ?>
+				<span class="ds-caption text-ds-ink-soft">Tanpa gambar</span>
 			<?php endif; ?>
 		</div>
-	</div>
-</a>
+
+		<div class="ds-product-card__foot">
+			<span class="ds-product-card__cta">Lihat Produk</span>
+
+			<?php if ($product['min_price'] !== NULL): ?>
+				<span class="text-right">
+					<span class="ds-product-card__price block"><?= rupiah($product['min_price']) ?></span>
+					<span class="ds-caption text-ds-ink-soft">mulai</span>
+				</span>
+			<?php else: ?>
+				<span class="ds-badge ds-badge--muted">Harga belum diisi</span>
+			<?php endif; ?>
+		</div>
+
+	</a>
+</article>

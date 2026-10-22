@@ -1,36 +1,44 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<nav class="text-xs text-stone-500 mb-4">
-	<a href="<?= site_url() ?>" class="hover:underline">Beranda</a> /
-	<a href="<?= site_url('products') ?>" class="hover:underline">Produk</a> /
-	<a href="<?= site_url('products?kategori='.$product['category_slug']) ?>" class="hover:underline"><?= esc((string) $product['category_name']) ?></a> /
+<nav class="ds-caption mb-6 text-ds-ink-soft" aria-label="Remah roti">
+	<a href="<?= site_url() ?>" class="underline decoration-ds-line underline-offset-4 transition-colors hover:text-ds-ink">Beranda</a>
+	<span aria-hidden="true"> / </span>
+	<a href="<?= site_url('products') ?>" class="underline decoration-ds-line underline-offset-4 transition-colors hover:text-ds-ink">Produk</a>
+	<span aria-hidden="true"> / </span>
+	<a href="<?= site_url('products?kategori='.$product['category_slug']) ?>" class="underline decoration-ds-line underline-offset-4 transition-colors hover:text-ds-ink"><?= esc((string) $product['category_name']) ?></a>
+	<span aria-hidden="true"> / </span>
 	<span><?= esc($product['name']) ?></span>
 </nav>
 
-<div class="grid gap-8 md:grid-cols-2">
+<div class="grid gap-8 md:grid-cols-2 md:gap-10">
 	<div>
-		<?php if ( ! empty($product['image_url'])): ?>
-			<img src="<?= esc(img_src($product['image_url'])) ?>" alt="<?= esc($product['name']) ?>"
-			     class="w-full h-72 object-cover rounded-lg bg-stone-100 border border-stone-200"
-			     onerror="this.onerror=null;this.src='https://placehold.co/800x600/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
-		<?php else: ?>
-			<div class="w-full h-72 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-400">
-				Tanpa gambar
-			</div>
-		<?php endif; ?>
+		<figure class="m-0 overflow-hidden rounded-lg border border-ds-line bg-ds-surface">
+			<?php if ( ! empty($product['image_url'])): ?>
+				<img src="<?= esc(img_src($product['image_url']), 'attr') ?>" alt="<?= esc($product['name']) ?>"
+				     class="aspect-[4/3] h-full w-full object-cover"
+				     onerror="this.onerror=null;this.src='https://placehold.co/800x600/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
+			<?php else: ?>
+				<div class="flex aspect-[4/3] items-center justify-center text-ds-ink-soft">
+					Tanpa gambar
+				</div>
+			<?php endif; ?>
+		</figure>
 	</div>
 
 	<div>
-		<p class="text-xs text-amber-800 mb-1"><?= esc((string) $product['category_name']) ?></p>
-		<h1 class="text-2xl font-bold mb-3"><?= esc($product['name']) ?></h1>
+		<p class="ds-label mb-2 text-ds-ink-soft"><?= esc((string) $product['category_name']) ?></p>
+		<h1 class="ds-display-md mb-4"><?= esc($product['name']) ?></h1>
 
 		<?php if ( ! empty($product['description'])): ?>
-			<p class="text-stone-600 text-sm leading-relaxed mb-6"><?= nl2br(esc($product['description'])) ?></p>
+			<div class="ds-body mb-6 max-w-[60ch] text-ds-ink-soft"><?= nl2br(esc($product['description'])) ?></div>
 		<?php endif; ?>
 
 		<?php if ( ! $product['variants']): ?>
-			<div class="rounded-md bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 text-sm">
-				Varian produk ini belum tersedia. Silakan cek kembali nanti.
+			<div class="ds-alert ds-alert--info">
+				<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+				</svg>
+				<span>Varian produk ini belum tersedia. Silakan cek kembali nanti.</span>
 			</div>
 		<?php else: ?>
 			<?php $hasStock = FALSE; ?>
@@ -38,18 +46,20 @@
 				<?php if ((int) $variant['stock'] > 0) { $hasStock = TRUE; break; } ?>
 			<?php endforeach; ?>
 
-			<form action="<?= site_url('cart/add') ?>" method="post" id="addToCartForm" class="border-t border-stone-200 pt-6">
+			<form action="<?= site_url('cart/add') ?>" method="post" id="addToCartForm" class="border-t border-ds-line pt-6">
 				<?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>
 				<?= form_hidden('product_id', (int) $product['id']) ?>
 
-				<p class="text-sm font-medium mb-2">Pilih ukuran</p>
+				<p class="ds-label mb-3 text-ds-ink-soft">Pilih ukuran</p>
 
 				<?php // Pilihan ukuran + harga. Varian habis tidak bisa dipilih. ?>
-				<div class="space-y-2 mb-5">
+				<div class="mb-6 space-y-2">
 					<?php foreach ($product['variants'] as $index => $variant): ?>
 						<?php $inStock = (int) $variant['stock'] > 0; ?>
-						<label class="flex items-center justify-between gap-3 border rounded-md px-3 py-2.5 text-sm cursor-pointer
-							<?= $inStock ? 'border-stone-300 hover:border-amber-700 has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50' : 'border-stone-200 bg-stone-100 text-stone-400 cursor-not-allowed' ?>">
+						<label class="flex items-center justify-between gap-3 rounded-md border px-4 py-3 text-sm transition-colors
+							<?= $inStock
+								? 'cursor-pointer border-ds-line bg-ds-surface hover:border-ds-ink has-[:checked]:border-ds-ink has-[:checked]:bg-ds-surface-alt'
+								: 'cursor-not-allowed border-ds-line bg-ds-surface-alt text-ds-ink-soft' ?>">
 							<span class="flex items-center gap-3">
 								<input type="radio" name="variant_id" value="<?= (int) $variant['id'] ?>"
 								       data-price="<?= (int) $variant['price'] ?>"
@@ -57,32 +67,32 @@
 								       data-label="<?= esc($variant['label'], 'attr') ?>"
 								       <?= ( ! $inStock) ? 'disabled' : '' ?>
 								       <?= ($inStock AND $index === 0) ? 'checked' : '' ?>
-								       class="accent-amber-800">
-								<span class="font-medium"><?= esc($variant['label']) ?></span>
+								       class="ds-check">
+								<span class="font-bold uppercase"><?= esc($variant['label']) ?></span>
 								<?php if ( ! $inStock): ?>
-									<span class="text-xs">(habis)</span>
+									<span class="ds-badge ds-badge--muted">habis</span>
 								<?php elseif ((int) $variant['stock'] <= 5): ?>
-									<span class="text-xs text-red-600">sisa <?= (int) $variant['stock'] ?></span>
+									<span class="ds-badge ds-badge--warn">sisa <?= (int) $variant['stock'] ?></span>
 								<?php endif; ?>
 							</span>
-							<span class="font-semibold"><?= rupiah($variant['price']) ?></span>
+							<span class="font-bold"><?= rupiah($variant['price']) ?></span>
 						</label>
 					<?php endforeach; ?>
 				</div>
 
-				<div class="flex items-end gap-3 mb-6">
+				<div class="mb-6 flex flex-wrap items-end gap-4">
 					<div>
-						<label for="qty" class="block text-sm font-medium mb-2">Jumlah</label>
+						<label for="qty" class="ds-label-text">Jumlah</label>
 						<input type="number" name="qty" id="qty" value="1" min="1" max="<?= (int) $maxQty ?>"
-						       class="w-24 border border-stone-300 rounded-md px-3 py-2 text-sm">
+						       class="ds-input w-28">
 					</div>
-					<div class="pb-2 text-sm text-stone-600">
-						Stok tersedia: <span id="stockInfo">-</span>
-					</div>
+					<p class="ds-caption pb-3 text-ds-ink-soft">
+						Stok tersedia: <span id="stockInfo" class="font-bold text-ds-ink">-</span>
+					</p>
 				</div>
 
 				<button type="submit" <?= $hasStock ? '' : 'disabled' ?>
-				        class="w-full sm:w-auto px-6 py-2.5 rounded-md font-semibold <?= $hasStock ? 'bg-amber-800 text-white hover:bg-amber-900' : 'bg-stone-300 text-stone-500 cursor-not-allowed' ?>">
+				        class="ds-btn ds-btn--primary ds-btn--block sm:!w-auto sm:!px-6">
 					<?= $hasStock ? 'Tambah ke Keranjang' : 'Stok Habis' ?>
 				</button>
 			</form>
@@ -91,9 +101,9 @@
 </div>
 
 <?php if ($related): ?>
-	<section class="mt-14">
-		<h2 class="text-lg font-semibold mb-4">Produk lainnya di kategori ini</h2>
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+	<section class="mt-14 md:mt-20">
+		<h2 class="ds-display-md mb-6 md:mb-8">Produk lainnya di kategori ini</h2>
+		<div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-4 lg:gap-6">
 			<?php foreach ($related as $item): ?>
 				<?php $this->load->view('products/_card', array('product' => $item)); ?>
 			<?php endforeach; ?>

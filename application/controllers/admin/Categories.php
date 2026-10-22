@@ -10,6 +10,7 @@ class Categories extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->model('Category_model');
+		$this->load->library('image_upload');
 	}
 
 	/**
@@ -29,9 +30,10 @@ class Categories extends Admin_Controller {
 	public function create()
 	{
 		$this->renderAdmin('admin/categories/form', array(
-			'pageTitle' => 'Tambah Kategori',
-			'category'  => NULL,
-			'isEdit'    => FALSE,
+			'pageTitle'   => 'Tambah Kategori',
+			'category'    => NULL,
+			'isEdit'      => FALSE,
+			'uploadError' => NULL,
 		));
 	}
 
@@ -51,9 +53,10 @@ class Categories extends Admin_Controller {
 		}
 
 		$this->renderAdmin('admin/categories/form', array(
-			'pageTitle' => 'Edit Kategori',
-			'category'  => $category,
-			'isEdit'    => TRUE,
+			'pageTitle'   => 'Edit Kategori',
+			'category'    => $category,
+			'isEdit'      => TRUE,
+			'uploadError' => NULL,
 		));
 	}
 
@@ -72,20 +75,36 @@ class Categories extends Admin_Controller {
 		if ($this->form_validation->run() === FALSE)
 		{
 			return $this->renderAdmin('admin/categories/form', array(
-				'pageTitle' => 'Tambah Kategori',
-				'category'  => NULL,
-				'isEdit'    => FALSE,
+				'pageTitle'   => 'Tambah Kategori',
+				'category'    => NULL,
+				'isEdit'      => FALSE,
+				'uploadError' => NULL,
 			));
 		}
 
-		$name = (string) $this->input->post('name', TRUE);
+		$image = $this->image_upload->upload('image_file', 'assets/img/kategori');
 
-		$this->Category_model->create(array(
-			'name'        => $name,
-			'slug'        => $this->Category_model->uniqueSlug($name),
-			'description' => (string) $this->input->post('description', TRUE),
-			'created_at'  => date('Y-m-d H:i:s'),
-		));
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderAdmin('admin/categories/form', array(
+				'pageTitle'   => 'Tambah Kategori',
+				'category'    => NULL,
+				'isEdit'      => FALSE,
+				'uploadError' => $image['error'],
+			));
+		}
+
+		$data = $this->collectData();
+
+		// File yang diunggah menang bila path/URL juga diisi.
+		if ($image['path'] !== NULL)
+		{
+			$data['image_url'] = $image['path'];
+		}
+
+		$data['created_at'] = date('Y-m-d H:i:s');
+
+		$this->Category_model->create($data);
 
 		$this->session->set_flashdata('success', 'Kategori berhasil ditambahkan.');
 		redirect('admin/categories');
@@ -116,19 +135,34 @@ class Categories extends Admin_Controller {
 		if ($this->form_validation->run() === FALSE)
 		{
 			return $this->renderAdmin('admin/categories/form', array(
-				'pageTitle' => 'Edit Kategori',
-				'category'  => $category,
-				'isEdit'    => TRUE,
+				'pageTitle'   => 'Edit Kategori',
+				'category'    => $category,
+				'isEdit'      => TRUE,
+				'uploadError' => NULL,
 			));
 		}
 
-		$name = (string) $this->input->post('name', TRUE);
+		$image = $this->image_upload->upload('image_file', 'assets/img/kategori');
 
-		$this->Category_model->update($category['id'], array(
-			'name'        => $name,
-			'slug'        => $this->Category_model->uniqueSlug($name, $category['id']),
-			'description' => (string) $this->input->post('description', TRUE),
-		));
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderAdmin('admin/categories/form', array(
+				'pageTitle'   => 'Edit Kategori',
+				'category'    => $category,
+				'isEdit'      => TRUE,
+				'uploadError' => $image['error'],
+			));
+		}
+
+		$data = $this->collectData($category['id']);
+
+		// File yang diunggah menang bila path/URL juga diisi.
+		if ($image['path'] !== NULL)
+		{
+			$data['image_url'] = $image['path'];
+		}
+
+		$this->Category_model->update($category['id'], $data);
 
 		$this->session->set_flashdata('success', 'Kategori berhasil diperbarui.');
 		redirect('admin/categories');
@@ -176,5 +210,38 @@ class Categories extends Admin_Controller {
 	{
 		$this->form_validation->set_rules('name', 'Nama kategori', 'trim|required|max_length[100]');
 		$this->form_validation->set_rules('description', 'Deskripsi', 'trim|max_length[255]');
+		// Cabang path lokal HARUS sebelum "|" agar regex tidak terpotong parser CI3.
+		$this->form_validation->set_rules('image_url', 'Gambar', 'trim|max_length[500]|regex_match[#^(assets/(?!.*\.\.)[A-Za-z0-9._/ -]+|https?://\S+)$#i]');
+	}
+
+	/**
+	 * Ambil input form yang sudah tervalidasi menjadi array kolom.
+	 *
+	 * @param	int $excludeId Kategori yang sedang diedit (agar slug tidak bentrok dengan dirinya sendiri)
+	 * @return	array
+	 */
+	private function collectData($excludeId = 0)
+	{
+		$name = (string) $this->input->post('name', TRUE);
+
+		return array(
+			'name'        => $name,
+			'slug'        => $this->Category_model->uniqueSlug($name, $excludeId),
+			'description' => $this->postOrNull('description'),
+			'image_url'   => $this->postOrNull('image_url'),
+		);
+	}
+
+	/**
+	 * Nilai POST yang sudah di-trim; string kosong menjadi NULL.
+	 *
+	 * @param	string $field
+	 * @return	string|NULL
+	 */
+	private function postOrNull($field)
+	{
+		$value = trim((string) $this->input->post($field, TRUE));
+
+		return ($value === '') ? NULL : $value;
 	}
 }

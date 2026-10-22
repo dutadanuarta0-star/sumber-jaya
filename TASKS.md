@@ -15,7 +15,7 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 - [x] Buat TASKS.md & AGENTS.md
 
 ## 2. Halaman publik
-- [x] Beranda (`Home`) — hero, kategori, produk unggulan
+- [x] Beranda (`Home`) — hero, kategori (kartu 2 kolom: gambar kiri, teks kanan), produk unggulan
 - [x] Katalog produk (`Products::index`) + filter kategori via `?kategori=slug`
 - [x] Detail produk (`Products::detail`) — pilih varian, harga, cek stok, qty
 - [x] Tentang kami (`About`) — konten dari tabel settings
@@ -31,7 +31,8 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 
 ## 5. Admin CRUD
 - [x] Produk: list, tambah, edit, hapus (varian + stok di form yang sama)
-- [x] Kategori: list, tambah, edit, hapus
+- [x] Kategori: list, tambah, edit, hapus (gambar kategori bisa di-upload dari komputer
+  atau diisi lewat path/URL, tampil di kartu kategori beranda)
 - [x] Slider beranda: list, tambah, edit, hapus (jumlah slide & gambar diatur admin,
   termasuk upload gambar dari komputer)
 - [x] Pengaturan identitas toko (`admin/Settings`)
@@ -111,3 +112,37 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
   memblokir eksekusi skrip. Uji e2e lulus: upload JPG → tersimpan, tampil di katalog/beranda,
   akses web 200 `image/jpeg`; file `.txt` berisi PHP ditolak + tidak tersimpan; path manual
   tanpa file tetap jalan
+
+## 10. Design system Co-Fi (implementasi `design-system.md`)
+
+Spesifikasi: `design-system.md` (root project) — warna krem/tan/hijau hutan, tipografi
+Anton + Space Mono, radius besar, komponen ramah. Semua perubahan **styling only**:
+tidak ada perubahan controller/model/library/`config/`/`system/`/`database.sql`.
+
+- [x] Dokumen spesifikasi disalin ke root project sebagai sumber kebenaran
+- [x] Aset dasar:
+  - `assets/css/design-system.css` — token (`:root`), kelas komponen `.ds-*`, focus-visible,
+    `prefers-reduced-motion`
+  - `assets/js/ds-tailwind-config.js` — token warna `ds-*`, breakpoint (sm 600 / md 768 /
+    lg 1024 / xl 1200 / 2xl 1536), skala radius monotonik (8/16/24/32/40/48 + pill),
+    skala tipografi `display-xl/lg/md`
+  - `assets/js/ds-ui.js` — drawer menu mobile (focus trap + Escape + kembalikan fokus)
+- [x] Halaman publik ditulis ulang: `layout/header.php` (nav 3+logo+3, drawer, search,
+  badge keranjang `aria-live`), `layout/footer.php` (frame gelap + tombol WA mengambang),
+  `home.php` (slider hero, brand strip, best products, feature card hijau, CTA banner tan),
+  `products/_card.php`, `products/index.php`, `products/detail.php`, `cart/index.php`, `about.php`
+- [x] Halaman admin ditulis ulang: `admin/layout/header.php` + `footer.php`, `admin/login.php`,
+  `admin/dashboard.php`, `admin/products/*`, `admin/categories/*`, `admin/slider/*`,
+  `admin/settings.php`, `admin/settings/account.php` — tabel tetap tabel (DS §7.5) dengan
+  `overflow-x: auto` + kolom pertama sticky
+- [x] Keputusan: kartu produk publik memakai tautan ghost "LIHAT PRODUK" (tanpa endpoint
+  POST add-to-cart baru); tombol WhatsApp memakai hijau DS `#2F6A52` (ikon WA tetap);
+  CTA banner = "GABUNG KLAN KOPI" (tanpa janji diskon fiktif)
+- [x] Uji lint PHP bersih di semua view; semua rute publik & 12 rute admin balas 200 tanpa error
+- [x] Uji responsif/a11y (`tools/verify.js`, Chrome DevTools Protocol): 6 viewport
+  (360/390/768/1024/1280/1440) × halaman publik + admin — tanpa overflow horizontal, skala
+  tipografi sesuai DS, radius 16/24/pill sesuai, pergantian nav/burger benar, tanpa error konsol
+- [x] Uji fungsional e2e: add/update/remove keranjang + checkout `wa.me` (isi pesan & subtotal
+  benar), pencarian & filter kategori, CRUD admin (produk + varian, slider, pengaturan) —
+  record uji dibuat lalu dihapus, jumlah data kembali ke baseline
+- [x] `AGENTS.md` diperbarui: struktur aset baru, konvensi token/design system, harness verifikasi
