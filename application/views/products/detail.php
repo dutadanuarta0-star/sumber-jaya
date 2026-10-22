@@ -11,7 +11,8 @@
 	<div>
 		<?php if ( ! empty($product['image_url'])): ?>
 			<img src="<?= esc(img_src($product['image_url'])) ?>" alt="<?= esc($product['name']) ?>"
-			     class="w-full h-72 object-cover rounded-lg bg-stone-100 border border-stone-200">
+			     class="w-full h-72 object-cover rounded-lg bg-stone-100 border border-stone-200"
+			     onerror="this.onerror=null;this.src='https://placehold.co/800x600/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
 		<?php else: ?>
 			<div class="w-full h-72 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-400">
 				Tanpa gambar

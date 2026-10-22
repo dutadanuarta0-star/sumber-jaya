@@ -1,0 +1,4 @@
+# Cegah eksekusi skrip di folder gambar (hanya file gambar yang boleh diakses).
+<FilesMatch "\.(?i:php|php3|php4|php5|php7|phtml|phar|cgi|pl|py|sh)$">
+	Require all denied
+</FilesMatch>

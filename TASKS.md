@@ -32,7 +32,8 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 ## 5. Admin CRUD
 - [x] Produk: list, tambah, edit, hapus (varian + stok di form yang sama)
 - [x] Kategori: list, tambah, edit, hapus
-- [x] Slider beranda: list, tambah, edit, hapus (jumlah slide & gambar diatur admin)
+- [x] Slider beranda: list, tambah, edit, hapus (jumlah slide & gambar diatur admin,
+  termasuk upload gambar dari komputer)
 - [x] Pengaturan identitas toko (`admin/Settings`)
 
 ## 6. Dashboard admin
@@ -53,6 +54,12 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
   (PHP 8): breadcrumb memakai `$product['category_slug']` tapi `Product_model::getDetail()`
   hanya memilih `category_name`. Fixed: tambah `categories.slug AS category_slug`;
   semua 8 halaman detail diuji ulang — 200 tanpa error
+- [x] Gambar produk Arabika Gayo tidak tampil: field Gambar diisi URL halaman produk
+  marketplace (`.html`), bukan file gambar. Fixed: foto Gayo asli
+  `assets/img/produk/arabika-gayo.jpg` (Wikimedia Commons, CC BY-SA 4.0 — kredit di
+  deskripsi), `image_url` diperbarui; teks bantuan form admin diperjelas (URL harus
+  menunjuk file gambar); kartu & detail produk diberi fallback `onerror` ke placeholder
+  agar URL rusak tidak menampilkan ikon gambar pecah
 
 ## 9. Fitur tambahan
 - [x] Tombol chat WhatsApp mengambang di semua halaman publik (kanan-bawah),
@@ -96,3 +103,11 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 - [x] Gambar produk "kopi Besemah" (id 6): foto asli dataran tinggi Pagaralam
   (Wikimedia Commons, CC BY-SA 4.0 — kredit di deskripsi),
   file `assets/img/produk/kopi-besemah.jpg`
+- [x] Upload gambar langsung dari komputer (produk & slider) — tidak perlu menyalin path:
+  `application/libraries/Image_upload.php` menerima JPG/PNG/WEBP maks 3 MB, nama file diacak
+  (`encrypt_name`), disimpan ke `assets/img/produk/` atau `assets/img/slider/`; form memakai
+  `form_open_multipart` + input file. Path/URL manual tetap didukung (upload menang bila
+  keduanya diisi); `webp` ditambahkan ke `config/mimes.php`; `.htaccess` di folder gambar
+  memblokir eksekusi skrip. Uji e2e lulus: upload JPG → tersimpan, tampil di katalog/beranda,
+  akses web 200 `image/jpeg`; file `.txt` berisi PHP ditolak + tidak tersimpan; path manual
+  tanpa file tetap jalan

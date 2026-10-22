@@ -3,7 +3,8 @@
 <a href="<?= site_url('products/detail/'.$product['id']) ?>"
    class="bg-white border border-stone-200 rounded-lg overflow-hidden hover:border-amber-700 hover:shadow-sm flex flex-col">
 	<?php if ( ! empty($product['image_url'])): ?>
-		<img src="<?= esc(img_src($product['image_url'])) ?>" alt="<?= esc($product['name']) ?>" class="w-full h-40 object-cover bg-stone-100" loading="lazy">
+		<img src="<?= esc(img_src($product['image_url'])) ?>" alt="<?= esc($product['name']) ?>" class="w-full h-40 object-cover bg-stone-100" loading="lazy"
+		     onerror="this.onerror=null;this.src='https://placehold.co/600x400/f5f5f4/78716c?text=Gambar+tidak+tersedia'">
 	<?php else: ?>
 		<div class="w-full h-40 bg-stone-100 flex items-center justify-center text-stone-400 text-sm">Tanpa gambar</div>
 	<?php endif; ?>

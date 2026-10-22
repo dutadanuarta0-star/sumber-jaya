@@ -19,9 +19,15 @@
 	</div>
 <?php endif; ?>
 
+<?php if ( ! empty($uploadError)): ?>
+	<div class="rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-5">
+		<?= esc($uploadError) ?>
+	</div>
+<?php endif; ?>
+
 <?php
 $action = $isEdit ? site_url('admin/products/update/'.$product['id']) : site_url('admin/products/store');
-echo form_open($action, array('class' => 'space-y-6'));
+echo form_open_multipart($action, array('class' => 'space-y-6'));
 ?>
 
 <div class="bg-white border border-stone-200 rounded-lg p-5 space-y-4">
@@ -50,14 +56,28 @@ echo form_open($action, array('class' => 'space-y-6'));
 	</div>
 
 	<div>
-		<label for="image_url" class="block text-sm font-medium mb-1.5">Gambar</label>
+		<label for="image_file" class="block text-sm font-medium mb-1.5">Upload gambar dari komputer</label>
+		<input type="file" name="image_file" id="image_file" accept="image/jpeg,image/png,image/webp"
+		       class="block w-full text-sm text-stone-600 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-800 file:text-white hover:file:bg-amber-900">
+		<p class="text-xs text-stone-500 mt-1">
+			Pilih file JPG, PNG, atau WEBP (maksimal 3 MB). File yang dipilih akan menggantikan gambar lama.
+		</p>
+	</div>
+
+	<div>
+		<label for="image_url" class="block text-sm font-medium mb-1.5">Atau path / URL gambar yang sudah ada</label>
 		<input type="text" name="image_url" id="image_url" maxlength="500" placeholder="assets/img/produk/nama-gambar.jpg"
 		       value="<?= esc($product ? $product['image_url'] : set_value('image_url')) ?>"
 		       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm">
 		<p class="text-xs text-stone-500 mt-1">
-			Isi path gambar di server (<code>assets/img/produk/...</code>) atau URL lengkap (<code>https://...</code>).
-			Kosongkan jika produk belum punya gambar.
+			Boleh dikosongkan jika memilih file di atas. Path server (<code>assets/img/produk/...</code>) atau URL
+			yang menunjuk langsung ke file gambar (<code>https://.../foto.jpg</code>) — bukan halaman web
+			(mis. halaman marketplace berakhiran <code>.html</code>).
 		</p>
+		<?php if ($product && ! empty($product['image_url'])): ?>
+			<img src="<?= esc(img_src($product['image_url']), 'attr') ?>" alt="Gambar saat ini"
+			     class="mt-2 h-28 w-40 object-cover rounded border border-stone-200">
+		<?php endif; ?>
 	</div>
 
 	<div>

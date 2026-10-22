@@ -13,9 +13,15 @@
 	</div>
 <?php endif; ?>
 
+<?php if ( ! empty($uploadError)): ?>
+	<div class="rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-5">
+		<?= esc($uploadError) ?>
+	</div>
+<?php endif; ?>
+
 <?php
 $action = $isEdit ? site_url('admin/slider/update/'.$slide['id']) : site_url('admin/slider/store');
-echo form_open($action, array('class' => 'space-y-6'));
+echo form_open_multipart($action, array('class' => 'space-y-6'));
 ?>
 
 <div class="bg-white border border-stone-200 rounded-lg p-5 space-y-4 max-w-2xl">
@@ -41,15 +47,25 @@ echo form_open($action, array('class' => 'space-y-6'));
 	</div>
 
 	<div>
-		<label for="image_url" class="block text-sm font-medium mb-1.5">Gambar latar</label>
+		<label for="image_file" class="block text-sm font-medium mb-1.5">Upload gambar dari komputer</label>
+		<input type="file" name="image_file" id="image_file" accept="image/jpeg,image/png,image/webp"
+		       class="block w-full text-sm text-stone-600 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-800 file:text-white hover:file:bg-amber-900">
+		<p class="text-xs text-stone-500 mt-1">
+			Pilih file JPG, PNG, atau WEBP (maksimal 3 MB). File yang dipilih akan menggantikan gambar lama.
+		</p>
+	</div>
+
+	<div>
+		<label for="image_url" class="block text-sm font-medium mb-1.5">Atau path / URL gambar yang sudah ada</label>
 		<input type="text" name="image_url" id="image_url" maxlength="500"
 		       value="<?= esc($slide ? (string) $slide['image_url'] : set_value('image_url')) ?>"
 		       class="w-full border border-stone-300 rounded-md px-3 py-2 text-sm"
 		       placeholder="assets/img/slider/promo.jpg">
 		<p class="text-xs text-stone-500 mt-1">
-			Taruh file gambar di folder <span class="font-mono">assets/img/slider/</span>, lalu tulis path-nya
-			(mis. <span class="font-mono">assets/img/slider/promo.jpg</span>). URL lengkap
-			<span class="font-mono">https://...</span> juga diterima. Kosongkan untuk memakai warna latar bawaan.
+			Boleh dikosongkan jika memilih file di atas. Path server
+			(<span class="font-mono">assets/img/slider/...</span>) atau URL yang menunjuk langsung ke file
+			gambar (<span class="font-mono">https://...</span>) — bukan halaman web.
+			Kosongkan keduanya untuk memakai warna latar bawaan.
 			Disarankan gambar lebar (mis. 1600&times;800 px) agar tidak pecah.
 		</p>
 		<?php if ($slide && ! empty($slide['image_url'])): ?>

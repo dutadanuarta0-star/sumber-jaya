@@ -19,6 +19,7 @@ class Products extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->model(array('Product_model', 'Category_model'));
+		$this->load->library('image_upload');
 	}
 
 	/**
@@ -75,13 +76,20 @@ class Products extends Admin_Controller {
 			return $this->renderForm(NULL, TRUE);
 		}
 
+		$image = $this->image_upload->upload('image_file', 'assets/img/produk');
+
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderForm(NULL, TRUE, $image['error']);
+		}
+
 		$name = (string) $this->input->post('name', TRUE);
 		$product = array(
 			'category_id' => (int) $this->input->post('category_id', TRUE),
 			'name'        => $name,
 			'slug'        => $this->Product_model->uniqueSlug($name),
 			'description' => (string) $this->input->post('description', TRUE),
-			'image_url'   => (string) $this->input->post('image_url', TRUE),
+			'image_url'   => $this->resolveImageUrl($image, 'image_url'),
 			'is_active'   => $this->input->post('is_active') ? 1 : 0,
 			'created_at'  => date('Y-m-d H:i:s'),
 			'updated_at'  => date('Y-m-d H:i:s'),
@@ -126,13 +134,20 @@ class Products extends Admin_Controller {
 			return $this->renderForm($product, TRUE);
 		}
 
+		$image = $this->image_upload->upload('image_file', 'assets/img/produk');
+
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderForm($product, TRUE, $image['error']);
+		}
+
 		$name = (string) $this->input->post('name', TRUE);
 		$data = array(
 			'category_id' => (int) $this->input->post('category_id', TRUE),
 			'name'        => $name,
 			'slug'        => $this->Product_model->uniqueSlug($name, $product['id']),
 			'description' => (string) $this->input->post('description', TRUE),
-			'image_url'   => (string) $this->input->post('image_url', TRUE),
+			'image_url'   => $this->resolveImageUrl($image, 'image_url'),
 			'is_active'   => $this->input->post('is_active') ? 1 : 0,
 			'updated_at'  => date('Y-m-d H:i:s'),
 		);
@@ -174,10 +189,11 @@ class Products extends Admin_Controller {
 	/**
 	 * Render form tambah/edit produk.
 	 *
-	 * @param	array|null $product  Data produk (NULL = tambah baru)
+	 * @param	array|null $product    Data produk (NULL = tambah baru)
 	 * @param	bool       $repopulate Ambil ulang input lama setelah validasi gagal
+	 * @param	string     $uploadError Pesan gagal unggah gambar (NULL = tidak ada)
 	 */
-	private function renderForm($product = NULL, $repopulate = FALSE)
+	private function renderForm($product = NULL, $repopulate = FALSE, $uploadError = NULL)
 	{
 		if ($repopulate)
 		{
@@ -206,6 +222,7 @@ class Products extends Admin_Controller {
 			'maxVariants'=> self::MAX_VARIANTS,
 			'categories' => $this->Category_model->getAll(),
 			'hasCategory'=> count($this->Category_model->getAll()) > 0,
+			'uploadError'=> $uploadError,
 		));
 	}
 
@@ -223,6 +240,21 @@ class Products extends Admin_Controller {
 		// "]" tanpa "[" di antaranya — cabang path lokal (ada "[A-Za-z...]") wajib
 		// berada SEBELUM "|" agar regex_match tidak terpotong.
 		$this->form_validation->set_rules('image_url', 'Gambar', 'trim|max_length[500]|regex_match[#^(assets/(?!.*\.\.)[A-Za-z0-9._/ -]+|https?://\S+)$#i]');
+	}
+
+	/**
+	 * Tentukan gambar akhir: file hasil upload diutamakan; jika tidak ada file
+	 * dipilih, pakai path/URL yang diketik admin.
+	 *
+	 * @param	array  $upload Hasil Image_upload::upload()
+	 * @param	string $field  Nama input teks gambar
+	 * @return	string
+	 */
+	private function resolveImageUrl(array $upload, $field)
+	{
+		return ($upload['path'] !== NULL)
+			? $upload['path']
+			: (string) $this->input->post($field, TRUE);
 	}
 
 	/**

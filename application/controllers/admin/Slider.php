@@ -10,6 +10,7 @@ class Slider extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->model('Hero_slide_model');
+		$this->load->library('image_upload');
 	}
 
 	/**
@@ -29,9 +30,10 @@ class Slider extends Admin_Controller {
 	public function create()
 	{
 		$this->renderAdmin('admin/slider/form', array(
-			'pageTitle' => 'Tambah Slide',
-			'slide'     => NULL,
-			'isEdit'    => FALSE,
+			'pageTitle'   => 'Tambah Slide',
+			'slide'       => NULL,
+			'isEdit'      => FALSE,
+			'uploadError' => NULL,
 		));
 	}
 
@@ -51,9 +53,10 @@ class Slider extends Admin_Controller {
 		}
 
 		$this->renderAdmin('admin/slider/form', array(
-			'pageTitle' => 'Edit Slide',
-			'slide'     => $slide,
-			'isEdit'    => TRUE,
+			'pageTitle'   => 'Edit Slide',
+			'slide'       => $slide,
+			'isEdit'      => TRUE,
+			'uploadError' => NULL,
 		));
 	}
 
@@ -72,13 +75,32 @@ class Slider extends Admin_Controller {
 		if ($this->form_validation->run() === FALSE)
 		{
 			return $this->renderAdmin('admin/slider/form', array(
-				'pageTitle' => 'Tambah Slide',
-				'slide'     => NULL,
-				'isEdit'    => FALSE,
+				'pageTitle'   => 'Tambah Slide',
+				'slide'       => NULL,
+				'isEdit'      => FALSE,
+				'uploadError' => NULL,
+			));
+		}
+
+		$image = $this->image_upload->upload('image_file', 'assets/img/slider');
+
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderAdmin('admin/slider/form', array(
+				'pageTitle'   => 'Tambah Slide',
+				'slide'       => NULL,
+				'isEdit'      => FALSE,
+				'uploadError' => $image['error'],
 			));
 		}
 
 		$data = $this->collectData();
+
+		if ($image['path'] !== NULL)
+		{
+			$data['image_url'] = $image['path'];
+		}
+
 		$data['created_at'] = date('Y-m-d H:i:s');
 
 		$this->Hero_slide_model->create($data);
@@ -112,13 +134,33 @@ class Slider extends Admin_Controller {
 		if ($this->form_validation->run() === FALSE)
 		{
 			return $this->renderAdmin('admin/slider/form', array(
-				'pageTitle' => 'Edit Slide',
-				'slide'     => $slide,
-				'isEdit'    => TRUE,
+				'pageTitle'   => 'Edit Slide',
+				'slide'       => $slide,
+				'isEdit'      => TRUE,
+				'uploadError' => NULL,
 			));
 		}
 
-		$this->Hero_slide_model->update($slide['id'], $this->collectData());
+		$image = $this->image_upload->upload('image_file', 'assets/img/slider');
+
+		if ($image['error'] !== NULL)
+		{
+			return $this->renderAdmin('admin/slider/form', array(
+				'pageTitle'   => 'Edit Slide',
+				'slide'       => $slide,
+				'isEdit'      => TRUE,
+				'uploadError' => $image['error'],
+			));
+		}
+
+		$data = $this->collectData();
+
+		if ($image['path'] !== NULL)
+		{
+			$data['image_url'] = $image['path'];
+		}
+
+		$this->Hero_slide_model->update($slide['id'], $data);
 
 		$this->session->set_flashdata('success', 'Slide berhasil diperbarui.');
 		redirect('admin/slider');
