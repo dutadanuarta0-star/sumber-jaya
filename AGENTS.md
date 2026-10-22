@@ -9,14 +9,15 @@ Stack: CodeIgniter 3.1.13 + Tailwind CSS (CDN) + MySQL/MariaDB. Bukan git repo.
 application/
   config/        config.php, autoload.php, database.php, routes.php
   controllers/   Home.php, Products.php, About.php, Cart.php
-    admin/       Login.php, Dashboard.php, Products.php, Categories.php, Settings.php
+    admin/       Login.php, Dashboard.php, Products.php, Categories.php, Slider.php, Settings.php
   core/          MY_Controller.php  (MY_Controller, Public_Controller, Admin_Controller)
-  helpers/       app_helper.php     (esc(), rupiah())
+  helpers/       app_helper.php     (esc(), rupiah(), img_src())
   libraries/     Cart_lib.php       (keranjang berbasis session)
-  models/        Setting_model, Category_model, Product_model, PageView_model, Admin_model
+  models/        Setting_model, Category_model, Product_model, PageView_model, Admin_model, Hero_slide_model
   views/         layout/, home.php, products/, about.php, cart/, admin/
 system/          framework CI3 — SUDAH DI-PATCH (lihat bawah); jangan ditimpa rilis CI baru
 assets/img/produk/  folder gambar produk (diisi manual, lihat konvensi "Gambar produk")
+assets/img/slider/  folder gambar latar slider beranda (diisi manual, aturan sama)
 database.sql     skema + seed; membuat database `sumber_jaya` sendiri saat di-import
 TASKS.md         daftar tugas
 ```
@@ -58,6 +59,11 @@ Sisa berkas di root bukan bagian aplikasi, aman diabaikan/dihapus: `diag.php` (h
   **Awas aturan `regex_match` di `admin/Products`**: cabang OR path lokal harus SEBELUM `|` —
   parser CI3 memecah rule pada `|` kecuali diikuti `]` tanpa `[` di antaranya; regex dengan
   `[` setelah `|` akan terpotong.
+- **Slider hero beranda dikelola dari admin** (`admin/Slider`, tabel `hero_slides`): jumlah slide =
+  jumlah baris, gambar latar manual di `assets/img/slider/` (aturan & validasi `regex_match` sama
+  dengan gambar produk). `Home::index()` mengirim slide aktif urut `sort_order`; view
+  `home.php` memakai fallback 1 slide bila tidak ada slide aktif. Arahkan tautan tombol ke path
+  internal (`products`) atau URL `https://`, bukan `javascript:`.
 - **Harga & stok HANYA ada di `product_variants`.** Setiap produk wajib punya minimal 1 varian.
 - **Tidak ada tabel `orders`.** Checkout murni redirect ke `wa.me`; stok tidak berkurang otomatis
   dan dikelola manual oleh admin. Stok divalidasi saat add/update keranjang.
@@ -89,6 +95,7 @@ $route['admin/account']            = 'admin/settings/account';
 $route['admin/accountUpdate']      = 'admin/settings/accountUpdate';
 $route['admin/products/edit/(:num)']   = 'admin/products/edit/$1';
 $route['admin/categories/edit/(:num)'] = 'admin/categories/edit/$1';
+$route['admin/slider/edit/(:num)']     = 'admin/slider/edit/$1';
 ```
 
 ## Kredensial & data placeholder (harus diganti oleh pemilik)

@@ -36,6 +36,7 @@
 			'dashboard'  => 'Dashboard',
 			'products'   => 'Produk',
 			'categories' => 'Kategori',
+			'slider'     => 'Slider Beranda',
 			'settings'   => 'Pengaturan Toko',
 			'account'    => 'Ubah Akun',
 		);

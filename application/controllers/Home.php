@@ -6,6 +6,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Home extends Public_Controller {
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model('Hero_slide_model');
+	}
+
 	public function index()
 	{
 		$this->recordView();
@@ -14,6 +20,7 @@ class Home extends Public_Controller {
 			'pageTitle'    => '',
 			'categories'   => $this->Category_model->getAllWithCount(),
 			'featured'     => $this->Product_model->getPublished(NULL, 4),
+			'heroSlides'   => $this->Hero_slide_model->getActive(),
 		);
 
 		$this->render('home', $data);

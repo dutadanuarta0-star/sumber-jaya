@@ -32,6 +32,7 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
 ## 5. Admin CRUD
 - [x] Produk: list, tambah, edit, hapus (varian + stok di form yang sama)
 - [x] Kategori: list, tambah, edit, hapus
+- [x] Slider beranda: list, tambah, edit, hapus (jumlah slide & gambar diatur admin)
 - [x] Pengaturan identitas toko (`admin/Settings`)
 
 ## 6. Dashboard admin
@@ -79,10 +80,19 @@ Status: `[ ]` belum, `[~]` sedang, `[x]` selesai.
   kunci, hasil kosong diberi pesan + tautan hapus pencarian. Uji lulus: arabika=4,
   ROBUSTA=2 (case-insensitive), besemah=1, zzz=0, q=% aman, XSS ter-escape,
   gabungan kategori+pencarian benar
-- [x] Hero beranda jadi slider: 3 slide (fade 700ms), panah + dots, auto-geser
-  6 detik, berhenti saat hover/fokus, hormati `prefers-reduced-motion`;
-  vanilla JS inline (tanpa library), konten dari array `$heroSlides` di
-  `views/home.php`; slide non-aktif `inert` + `aria-hidden`
+- [x] Hero beranda jadi slider: fade 700ms, panah + dots, auto-geser
+  5 detik, berhenti saat hover/fokus, hormati `prefers-reduced-motion`;
+  vanilla JS inline (tanpa library); slide non-aktif `inert` + `aria-hidden`;
+  panah/dots otomatis disembunyikan bila hanya 1 slide aktif
+- [x] Slider beranda dikelola dari admin (`admin/Slider`, tabel `hero_slides`):
+  tambah/hapus slide = mengubah jumlah slide; field Gambar latar menerima path
+  lokal `assets/img/slider/...` atau URL https; label, judul, deskripsi, teks +
+  tautan tombol, urutan tampil, dan toggle aktif. Gambar opsional — tanpa gambar
+  memakai warna latar bergiliran. Beranda otomatis memakai slide aktif urut
+  `sort_order`; bila belum ada slide aktif, tampil 1 slide bawaan. Uji e2e lulus:
+  tambah/ubah/hapus slide, gambar tampil di beranda, tolak `../evil.jpg` dan
+  `javascript:`, slide nonaktif tidak tampil, kondisi 1 slide tanpa panah/dots,
+  halaman admin & beranda tanpa error PHP
 - [x] Gambar produk "kopi Besemah" (id 6): foto asli dataran tinggi Pagaralam
   (Wikimedia Commons, CC BY-SA 4.0 — kredit di deskripsi),
   file `assets/img/produk/kopi-besemah.jpg`

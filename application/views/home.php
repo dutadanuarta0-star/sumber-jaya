@@ -1,30 +1,25 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
 <?php
-// Konten slider hero. Ubah isi array ini untuk mengganti slide.
-$heroSlides = array(
-	array(
-		'label' => 'Roasted fresh every week',
-		'title' => 'Kopi pilihan dari petani lokal Indonesia',
-		'text'  => 'Dari Gayo sampai Toraja. Pilih ukuran favoritmu, tambahkan ke keranjang, lalu checkout langsung lewat WhatsApp.',
-		'cta'   => array('text' => 'Lihat Katalog', 'url' => site_url('products')),
-		'bg'    => 'bg-amber-900',
-	),
-	array(
-		'label' => 'Dari dataran tinggi',
-		'title' => 'Arabika, Robusta, sampai kopi Besemah',
-		'text'  => 'Setiap biji dipilih dari petani lokal Indonesia dan disangrai segar agar rasanya konsisten di setiap seduhan.',
-		'cta'   => array('text' => 'Tentang Kami', 'url' => site_url('about')),
-		'bg'    => 'bg-stone-800',
-	),
-	array(
-		'label' => 'Pesan tanpa ribet',
-		'title' => 'Checkout langsung lewat WhatsApp',
-		'text'  => 'Pilih varian favoritmu, tambahkan ke keranjang, dan pesan dalam hitungan menit — tanpa perlu daftar akun.',
-		'cta'   => array('text' => 'Mulai Belanja', 'url' => site_url('products')),
-		'bg'    => 'bg-amber-800',
-	),
-);
+// Slide hero dimuat dari database (admin > Slider Beranda).
+$heroSlides = isset($heroSlides) ? $heroSlides : array();
+
+// Bila belum ada slide aktif, tampilkan satu slide bawaan agar beranda tetap utuh.
+if ( ! $heroSlides)
+{
+	$heroSlides = array(array(
+		'label'     => 'Roasted fresh every week',
+		'title'     => 'Kopi pilihan dari petani lokal Indonesia',
+		'text'      => 'Dari Gayo sampai Toraja. Pilih ukuran favoritmu, tambahkan ke keranjang, lalu checkout langsung lewat WhatsApp.',
+		'image_url' => NULL,
+		'cta_text'  => 'Lihat Katalog',
+		'cta_url'   => 'products',
+	));
+}
+
+$heroTotal = count($heroSlides);
+// Warna latar cadangan saat slide tidak punya gambar.
+$heroColors = array('bg-amber-900', 'bg-stone-800', 'bg-amber-800');
 ?>
 
 <section id="heroSlider" class="relative rounded-lg overflow-hidden mb-10" aria-roledescription="carousel" aria-label="Sorotan toko">
@@ -36,23 +31,52 @@ $heroSlides = array(
 			     aria-label="Slide <?= $i + 1 ?> dari <?= count($heroSlides) ?>"
 			     aria-hidden="<?= $i === 0 ? 'false' : 'true' ?>"
 			     <?= $i === 0 ? '' : 'inert' ?>>
-				<div class="<?= esc($slide['bg'], 'attr') ?> text-white px-6 py-12 sm:px-10">
-					<p class="text-amber-200 text-sm mb-2"><?= esc($slide['label']) ?></p>
-					<?php if ($i === 0): ?>
-						<h1 class="text-3xl sm:text-4xl font-bold mb-3"><?= esc($slide['title']) ?></h1>
-					<?php else: ?>
-						<h2 class="text-3xl sm:text-4xl font-bold mb-3"><?= esc($slide['title']) ?></h2>
+				<?php
+				$ctaText = trim((string) $slide['cta_text']);
+				$ctaUrl  = trim((string) $slide['cta_url']);
+
+				if ($ctaUrl !== '' && ! preg_match('#^https?://#i', $ctaUrl))
+				{
+					$ctaUrl = site_url($ctaUrl);
+				}
+				?>
+				<div class="relative <?= esc($heroColors[$i % count($heroColors)], 'attr') ?> text-white">
+					<?php if ( ! empty($slide['image_url'])): ?>
+						<img src="<?= esc(img_src($slide['image_url']), 'attr') ?>" alt=""
+						     class="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
+						<div class="absolute inset-0 bg-black/50" aria-hidden="true"></div>
 					<?php endif; ?>
-					<p class="max-w-2xl text-amber-100 mb-6"><?= esc($slide['text']) ?></p>
-					<a href="<?= esc($slide['cta']['url'], 'attr') ?>"
-					   class="inline-block bg-white text-amber-900 font-semibold px-5 py-2.5 rounded-md hover:bg-amber-100">
-						<?= esc($slide['cta']['text']) ?>
-					</a>
+
+					<div class="relative px-6 py-12 sm:px-10 min-h-[20rem] flex items-center">
+						<div class="w-full">
+						<?php if (trim((string) $slide['label']) !== ''): ?>
+							<p class="text-amber-200 text-sm mb-2"><?= esc($slide['label']) ?></p>
+						<?php endif; ?>
+
+						<?php if ($i === 0): ?>
+							<h1 class="text-3xl sm:text-4xl font-bold mb-3"><?= esc($slide['title']) ?></h1>
+						<?php else: ?>
+							<h2 class="text-3xl sm:text-4xl font-bold mb-3"><?= esc($slide['title']) ?></h2>
+						<?php endif; ?>
+
+						<?php if (trim((string) $slide['text']) !== ''): ?>
+							<p class="max-w-2xl text-amber-100 mb-6"><?= esc($slide['text']) ?></p>
+						<?php endif; ?>
+
+						<?php if ($ctaText !== '' && $ctaUrl !== ''): ?>
+							<a href="<?= esc($ctaUrl, 'attr') ?>"
+							   class="inline-block bg-white text-amber-900 font-semibold px-5 py-2.5 rounded-md hover:bg-amber-100">
+								<?= esc($ctaText) ?>
+							</a>
+						<?php endif; ?>
+						</div>
+					</div>
 				</div>
 			</div>
 		<?php endforeach; ?>
 	</div>
 
+	<?php if ($heroTotal > 1): ?>
 	<button type="button" data-hero-prev aria-label="Slide sebelumnya"
 	        class="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white">
 		<svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -75,6 +99,7 @@ $heroSlides = array(
 			</button>
 		<?php endforeach; ?>
 	</div>
+	<?php endif; ?>
 </section>
 
 <script>
@@ -84,8 +109,11 @@ $heroSlides = array(
 
 	var slides = root.querySelectorAll('[data-hero-slide]');
 	var dots = root.querySelectorAll('[data-hero-dot]');
+	var nextBtn = root.querySelector('[data-hero-next]');
+	var prevBtn = root.querySelector('[data-hero-prev]');
 	var index = 0;
 	var timer = null;
+	var intervalMs = 5000; // geser otomatis tiap 5 detik
 	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	function show(n) {
@@ -114,11 +142,16 @@ $heroSlides = array(
 	function start() {
 		if (reduceMotion) return;
 		stop();
-		timer = setInterval(next, 6000);
+		timer = setInterval(next, intervalMs);
 	}
 
-	root.querySelector('[data-hero-next]').addEventListener('click', function () { next(); start(); });
-	root.querySelector('[data-hero-prev]').addEventListener('click', function () { prev(); start(); });
+	if (slides.length < 2 || ! nextBtn || ! prevBtn)
+	{
+		return;
+	}
+
+	nextBtn.addEventListener('click', function () { next(); start(); });
+	prevBtn.addEventListener('click', function () { prev(); start(); });
 
 	dots.forEach(function (dot, i) {
 		dot.addEventListener('click', function () { show(i); start(); });
@@ -130,7 +163,6 @@ $heroSlides = array(
 	root.addEventListener('focusin', stop);
 	root.addEventListener('focusout', start);
 
-	show(0);
 	start();
 })();
 </script>
