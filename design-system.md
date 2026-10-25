@@ -324,11 +324,13 @@ hanya pada halaman yang memakainya.
 - **Slide:** tiap slide punya tinggi minimum 416px (mobile) / 512px (≥768px); konten rata bawah di
   mobile, rata tengah di desktop. Foto hero full-bleed + overlay `--color-overlay`.
 - **Navigasi:**
-  - Panah kiri/kanan — bulat 44px, bg `frame` 60% (hover 85%), ikon `on-green`, 12px dari tepi.
+  - Panah kiri/kanan — bulat 48px (56px di ≥768px), bg `frame` 72% (hover 92%), garis tepi tipis,
+    ikon `on-green`, 12px dari tepi (20px di ≥768px); sengaja besar agar mudah diklik/disentuh.
   - Titik (pagination) — bulat 10px, `on-forest` 40%, aktif `on-forest` 100%, jarak 8px, 16px dari bawah.
   - Penanda aktif diberi `aria-current="true"`; titik adalah `<button>` (bisa di-fokus & di-tekan).
 - **Perilaku:** geser otomatis tiap 5 detik (berhenti saat kursor di atas slider), loop, bisa di-drag
-  (swipe), bisa digeser dengan keyboard panah kiri/kanan saat slider difokus.
+  (swipe/drag mouse di desktop; geser singkat ±25% lebar slide sudah pindah), bisa digeser dengan
+  keyboard panah kiri/kanan saat slider difokus.
 - **Aksesibilitas:** slide aktif `aria-hidden="false"`, slide lain `aria-hidden="true"` + `inert`
   (tidak bisa difokus); pesan a11y berbahasa Indonesia ("Slide sebelumnya", "Ke slide N").
 - **Fallback:** bila CDN gagal dimuat, hanya slide pertama yang tampil (tombol & titik disembunyikan)

@@ -238,6 +238,12 @@ class Product_model extends CI_Model {
 	 */
 	public function create(array $product, array $variants)
 	{
+		// Setiap produk wajib punya minimal satu varian (harga & stok ada di sana).
+		if ( ! $variants)
+		{
+			return FALSE;
+		}
+
 		$this->db->trans_start();
 		$this->db->insert('products', $product);
 		$productId = (int) $this->db->insert_id();
@@ -254,6 +260,12 @@ class Product_model extends CI_Model {
 	 */
 	public function update($id, array $product, array $variants)
 	{
+		// Jangan pernah menghapus semua varian produk yang sudah ada.
+		if ( ! $variants)
+		{
+			return FALSE;
+		}
+
 		$this->db->trans_start();
 		$this->db->where('id', (int) $id)->update('products', $product);
 		$this->db->where('product_id', (int) $id)->delete('product_variants');

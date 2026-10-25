@@ -41,10 +41,23 @@
 				<span>Varian produk ini belum tersedia. Silakan cek kembali nanti.</span>
 			</div>
 		<?php else: ?>
-			<?php $hasStock = FALSE; ?>
-			<?php foreach ($product['variants'] as $variant): ?>
-				<?php if ((int) $variant['stock'] > 0) { $hasStock = TRUE; break; } ?>
-			<?php endforeach; ?>
+			<?php
+			// Pilih varian pertama yang masih ada stok sebagai pilihan awal.
+			// Varian pertama bisa saja habis, jadi tidak boleh bergantung pada index 0.
+			$firstInStock = NULL;
+			$hasStock = FALSE;
+			foreach ($product['variants'] as $variant)
+			{
+				if ((int) $variant['stock'] > 0)
+				{
+					$hasStock = TRUE;
+					if ($firstInStock === NULL)
+					{
+						$firstInStock = (int) $variant['id'];
+					}
+				}
+			}
+			?>
 
 			<form action="<?= site_url('cart/add') ?>" method="post" id="addToCartForm" class="border-t border-ds-line pt-6">
 				<?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>
@@ -54,7 +67,7 @@
 
 				<?php // Pilihan ukuran + harga. Varian habis tidak bisa dipilih. ?>
 				<div class="mb-6 space-y-2">
-					<?php foreach ($product['variants'] as $index => $variant): ?>
+					<?php foreach ($product['variants'] as $variant): ?>
 						<?php $inStock = (int) $variant['stock'] > 0; ?>
 						<label class="flex items-center justify-between gap-3 rounded-md border px-4 py-3 text-sm transition-colors
 							<?= $inStock
@@ -65,8 +78,8 @@
 								       data-price="<?= (int) $variant['price'] ?>"
 								       data-stock="<?= (int) $variant['stock'] ?>"
 								       data-label="<?= esc($variant['label'], 'attr') ?>"
-								       <?= ( ! $inStock) ? 'disabled' : '' ?>
-								       <?= ($inStock AND $index === 0) ? 'checked' : '' ?>
+								       <?= $inStock ? 'required' : 'disabled' ?>
+								       <?= ($inStock AND (int) $variant['id'] === $firstInStock) ? 'checked' : '' ?>
 								       class="ds-check">
 								<span class="font-bold uppercase"><?= esc($variant['label']) ?></span>
 								<?php if ( ! $inStock): ?>
@@ -82,9 +95,21 @@
 
 				<div class="mb-6 flex flex-wrap items-end gap-4">
 					<div>
-						<label for="qty" class="ds-label-text">Jumlah</label>
-						<input type="number" name="qty" id="qty" value="1" min="1" max="<?= (int) $maxQty ?>"
-						       class="ds-input w-28">
+						<span class="ds-label-text">Jumlah</span>
+						<div class="mt-1 flex items-center gap-2">
+							<button type="button" id="qtyMinus" class="ds-btn ds-btn--ghost ds-btn--sm !h-10 !w-10 !px-0" aria-label="Kurangi jumlah">
+								<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<path d="M5 12h14"/>
+								</svg>
+							</button>
+							<input type="number" name="qty" id="qty" value="1" min="1" max="<?= (int) $maxQty ?>" readonly
+							       class="ds-input w-16 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+							<button type="button" id="qtyPlus" class="ds-btn ds-btn--ghost ds-btn--sm !h-10 !w-10 !px-0" aria-label="Tambah jumlah">
+								<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+									<path d="M12 5v14M5 12h14"/>
+								</svg>
+							</button>
+						</div>
 					</div>
 					<p class="ds-caption pb-3 text-ds-ink-soft">
 						Stok tersedia: <span id="stockInfo" class="font-bold text-ds-ink">-</span>
@@ -120,20 +145,66 @@
 
 	var stockInfo = document.getElementById('stockInfo');
 	var qtyInput = document.getElementById('qty');
+	var qtyMinus = document.getElementById('qtyMinus');
+	var qtyPlus = document.getElementById('qtyPlus');
 	var radios = form.querySelectorAll('input[name="variant_id"]');
+	var maxQtyGlobal = <?= (int) $maxQty ?>;
+
+	function getMaxQty() {
+		var checked = form.querySelector('input[name="variant_id"]:checked');
+		var stock = checked ? (parseInt(checked.dataset.stock, 10) || 0) : 0;
+		if (stock <= 0) {
+			return 0;
+		}
+		return Math.max(1, Math.min(stock, maxQtyGlobal));
+	}
 
 	function sync() {
 		var checked = form.querySelector('input[name="variant_id"]:checked');
 		if (!checked) {
 			stockInfo.textContent = '-';
+			qtyInput.max = maxQtyGlobal;
+			qtyMinus.disabled = true;
+			qtyPlus.disabled = true;
 			return;
 		}
 		var stock = parseInt(checked.dataset.stock, 10) || 0;
 		stockInfo.textContent = stock + ' pcs';
-		qtyInput.max = Math.max(1, Math.min(stock, <?= (int) $maxQty ?>));
-		if (parseInt(qtyInput.value, 10) > parseInt(qtyInput.max, 10)) {
-			qtyInput.value = qtyInput.max;
+		var maxQty = getMaxQty();
+		qtyInput.max = maxQty;
+		if (maxQty <= 0) {
+			qtyInput.value = 0;
+			qtyMinus.disabled = true;
+			qtyPlus.disabled = true;
+			return;
 		}
+		var val = parseInt(qtyInput.value, 10) || 1;
+		if (val < 1) val = 1;
+		if (val > maxQty) val = maxQty;
+		qtyInput.value = val;
+		qtyMinus.disabled = (val <= 1);
+		qtyPlus.disabled = (val >= maxQty);
+	}
+
+	if (qtyMinus) {
+		qtyMinus.addEventListener('click', function () {
+			var val = parseInt(qtyInput.value, 10) || 1;
+			if (val > 1) {
+				qtyInput.value = val - 1;
+			}
+			sync();
+		});
+	}
+
+	if (qtyPlus) {
+		qtyPlus.addEventListener('click', function () {
+			var val = parseInt(qtyInput.value, 10) || 1;
+			var maxQty = getMaxQty();
+			if (maxQty > 0 && val < maxQty) {
+				qtyInput.value = val + 1;
+			}
+			sync();
+		});
 	}
 
 	radios.forEach(function (radio) { radio.addEventListener('change', sync); });

@@ -76,6 +76,13 @@ class Products extends Admin_Controller {
 			return $this->renderForm(NULL, TRUE);
 		}
 
+		$variants = $this->collectVariants();
+
+		if ( ! $variants)
+		{
+			return $this->renderForm(NULL, TRUE, 'Minimal satu varian wajib diisi (nama ukuran, harga, dan stok).');
+		}
+
 		$image = $this->image_upload->upload('image_file', 'assets/img/produk');
 
 		if ($image['error'] !== NULL)
@@ -95,7 +102,7 @@ class Products extends Admin_Controller {
 			'updated_at'  => date('Y-m-d H:i:s'),
 		);
 
-		$productId = $this->Product_model->create($product, $this->collectVariants());
+		$productId = $this->Product_model->create($product, $variants);
 
 		if ($productId === FALSE)
 		{
@@ -134,6 +141,13 @@ class Products extends Admin_Controller {
 			return $this->renderForm($product, TRUE);
 		}
 
+		$variants = $this->collectVariants();
+
+		if ( ! $variants)
+		{
+			return $this->renderForm($product, TRUE, 'Minimal satu varian wajib diisi (nama ukuran, harga, dan stok).');
+		}
+
 		$image = $this->image_upload->upload('image_file', 'assets/img/produk');
 
 		if ($image['error'] !== NULL)
@@ -152,7 +166,7 @@ class Products extends Admin_Controller {
 			'updated_at'  => date('Y-m-d H:i:s'),
 		);
 
-		if ( ! $this->Product_model->update($product['id'], $data, $this->collectVariants()))
+		if ( ! $this->Product_model->update($product['id'], $data, $variants))
 		{
 			$this->session->set_flashdata('error', 'Produk gagal diperbarui. Coba lagi.');
 			return $this->renderForm($product, TRUE);
@@ -191,9 +205,9 @@ class Products extends Admin_Controller {
 	 *
 	 * @param	array|null $product    Data produk (NULL = tambah baru)
 	 * @param	bool       $repopulate Ambil ulang input lama setelah validasi gagal
-	 * @param	string     $uploadError Pesan gagal unggah gambar (NULL = tidak ada)
+	 * @param	string     $formError Pesan kesalahan form (upload/varian, NULL = tidak ada)
 	 */
-	private function renderForm($product = NULL, $repopulate = FALSE, $uploadError = NULL)
+	private function renderForm($product = NULL, $repopulate = FALSE, $formError = NULL)
 	{
 		if ($repopulate)
 		{
@@ -222,7 +236,7 @@ class Products extends Admin_Controller {
 			'maxVariants'=> self::MAX_VARIANTS,
 			'categories' => $this->Category_model->getAll(),
 			'hasCategory'=> count($this->Category_model->getAll()) > 0,
-			'uploadError'=> $uploadError,
+			'formError'  => $formError,
 		));
 	}
 

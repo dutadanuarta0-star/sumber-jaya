@@ -51,9 +51,17 @@
 	var options = {
 		loop: multi,
 		speed: reduceMotion ? 0 : 700,
+		effect: 'slide',
+		direction: 'horizontal',
+		slidesPerView: 1,
+		spaceBetween: 0,
 		autoHeight: false,
 		allowTouchMove: multi,
+		simulateTouch: true,
 		grabCursor: multi,
+		// Geser singkat (±25% lebar slide) sudah cukup untuk pindah slide,
+		// supaya navigasi kiri/kanan terasa ringan di mouse maupun sentuhan.
+		longSwipesRatio: 0.25,
 		watchSlidesProgress: true,
 		keyboard: { enabled: multi, onlyInViewport: true },
 		a11y: {
@@ -71,8 +79,14 @@
 			: false,
 		on: {
 			init: function (swiper) {
-				syncSlideState(swiper);
+				// Selama fallback aktif, slide selain yang pertama disembunyikan
+				// (`display: none`), sehingga saat init Swiper mengukur lebar 0 dan
+				// menganggap semua slide muat dalam satu layar → slider terkunci
+				// (panah, autoplay, dan drag tidak berfungsi). Lepas kelas fallback
+				// lebih dulu, lalu minta Swiper mengukur ulang.
 				root.classList.add('ds-hero--ready');
+				swiper.update();
+				syncSlideState(swiper);
 			},
 			slideChange: function (swiper) {
 				syncSlideState(swiper);

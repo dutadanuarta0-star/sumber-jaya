@@ -30,7 +30,7 @@ class Cart extends Public_Controller {
 
 		$items = array();
 		$subtotal = 0;
-		$hasIssue = FALSE;
+		$adjusted = FALSE;
 
 		foreach ($rawItems as $variantId => $snapshot)
 		{
@@ -38,7 +38,7 @@ class Cart extends Public_Controller {
 			if ( ! isset($variants[$variantId]))
 			{
 				$this->cart_lib->remove($variantId);
-				$hasIssue = TRUE;
+				$adjusted = TRUE;
 				continue;
 			}
 
@@ -47,25 +47,34 @@ class Cart extends Public_Controller {
 			$stock = (int) $variant['stock'];
 			$note = '';
 
+			// Data session rusak/tidak wajar: buang item tanpa jumlah.
+			if ($qty <= 0)
+			{
+				$this->cart_lib->remove($variantId);
+				$adjusted = TRUE;
+				continue;
+			}
+
 			// Sesuaikan jumlah dengan stok yang tersedia.
 			if ($stock <= 0)
 			{
+				// Item tetap ditampilkan agar pembeli tahu stoknya habis,
+				// tetapi tidak dihitung ke subtotal dan dilewati saat checkout.
 				$note = 'Stok habis — produk ini akan dilewati saat checkout.';
-				$hasIssue = TRUE;
 			}
 			elseif ($qty > $stock)
 			{
 				$qty = $stock;
 				$this->cart_lib->setQty($variantId, $qty);
 				$note = 'Jumlah disesuaikan dengan stok tersedia.';
-				$hasIssue = TRUE;
+				$adjusted = TRUE;
 			}
 			elseif ($qty > self::MAX_QTY)
 			{
 				$qty = self::MAX_QTY;
 				$this->cart_lib->setQty($variantId, $qty);
 				$note = 'Jumlah dibatasi maksimal '.self::MAX_QTY.' per varian.';
-				$hasIssue = TRUE;
+				$adjusted = TRUE;
 			}
 
 			$lineTotal = (int) $variant['price'] * $qty;
@@ -87,7 +96,7 @@ class Cart extends Public_Controller {
 			);
 		}
 
-		if ($hasIssue)
+		if ($adjusted)
 		{
 			$this->session->set_flashdata('info', 'Sebagian isi keranjang disesuaikan dengan stok terbaru. Silakan periksa kembali.');
 		}
@@ -174,8 +183,10 @@ class Cart extends Public_Controller {
 		$qty = (int) $this->input->post('qty', TRUE);
 
 		$variant = $this->Product_model->getVariantsByIds(array($variantId));
+		$cartItems = $this->cart_lib->items();
 
-		if ( ! isset($variant[$variantId]))
+		// Hanya boleh mengubah item yang benar-benar ada di keranjang pengguna.
+		if ( ! isset($variant[$variantId]) OR ! isset($cartItems[$variantId]))
 		{
 			$this->session->set_flashdata('error', 'Item tidak ditemukan di keranjang.');
 			redirect('cart');
@@ -183,14 +194,18 @@ class Cart extends Public_Controller {
 
 		$stock = (int) $variant[$variantId]['stock'];
 
-		if ($qty <= 0)
+		// Jumlah 0 berarti hapus. Varian yang stoknya habis juga dihapus
+		// supaya tidak tersimpan sebagai item dengan jumlah 1.
+		if ($qty <= 0 OR $stock <= 0)
 		{
 			$this->cart_lib->remove($variantId);
-			$this->session->set_flashdata('success', 'Item dihapus dari keranjang.');
+			$this->session->set_flashdata('success', $stock <= 0
+				? 'Item dihapus karena stoknya habis.'
+				: 'Item dihapus dari keranjang.');
 		}
 		else
 		{
-			$qty = min($qty, max($stock, 1), self::MAX_QTY);
+			$qty = min($qty, $stock, self::MAX_QTY);
 			$this->cart_lib->setQty($variantId, $qty);
 			$this->session->set_flashdata('success', 'Jumlah diperbarui.');
 		}
@@ -262,6 +277,13 @@ class Cart extends Public_Controller {
 			}
 
 			$qty = min((int) $snapshot['qty'], $stock, self::MAX_QTY);
+
+			// Lewati item tanpa jumlah (session lama/rusak).
+			if ($qty <= 0)
+			{
+				continue;
+			}
+
 			$lineTotal = (int) $variant['price'] * $qty;
 			$subtotal += $lineTotal;
 
@@ -310,9 +332,11 @@ class Cart extends Public_Controller {
 
 		$variants = $this->Product_model->getVariantsByIds(array_keys($items));
 
-		foreach ($variants as $variant)
+		foreach ($items as $variantId => $snapshot)
 		{
-			if ((int) $variant['stock'] > 0)
+			if (isset($variants[$variantId])
+				AND (int) $variants[$variantId]['stock'] > 0
+				AND (int) $snapshot['qty'] > 0)
 			{
 				return TRUE;
 			}

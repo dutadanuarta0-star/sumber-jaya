@@ -202,7 +202,8 @@ class Slider extends Admin_Controller {
 		$this->form_validation->set_rules('image_url', 'Gambar', 'trim|max_length[500]|regex_match[#^(assets/(?!.*\.\.)[A-Za-z0-9._/ -]+|https?://\S+)$#i]');
 		$this->form_validation->set_rules('cta_text', 'Teks tombol', 'trim|max_length[50]');
 		$this->form_validation->set_rules('cta_url', 'Tautan tombol', 'trim|max_length[255]|regex_match[~^((?!/)[A-Za-z0-9._/?=&%#-]+|https?://\S+)$~i]');
-		$this->form_validation->set_rules('sort_order', 'Urutan', 'trim|is_natural');
+		// Boleh kosong (dianggap 0), tetapi tidak boleh negatif/berisi huruf.
+		$this->form_validation->set_rules('sort_order', 'Urutan', 'trim|max_length[10]|regex_match[/^[0-9]*$/]');
 	}
 
 	/**

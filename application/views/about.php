@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php $aboutWa = wa_link($store['whatsapp_number'], 'Halo '.$store['store_name'].', saya ingin bertanya tentang produk.'); ?>
 
 <div class="max-w-3xl">
 	<p class="ds-label mb-3 text-ds-ink-soft">Tentang toko</p>
@@ -12,7 +13,7 @@
 		<div class="ds-panel mb-6 text-ds-ink-soft">Deskripsi toko belum diisi oleh admin.</div>
 	<?php endif; ?>
 
-	<?php if ( ! empty($store['address']) OR ! empty($store['phone']) OR ! empty($store['email'])): ?>
+	<?php if ( ! empty($store['address']) OR ! empty($store['phone']) OR ! empty($store['email']) OR $aboutWa !== ''): ?>
 		<div class="ds-panel">
 			<h2 class="ds-panel-title mb-4">Hubungi Kami</h2>
 			<ul class="ds-body space-y-1 text-ds-ink-soft">
@@ -27,8 +28,8 @@
 				<?php endif; ?>
 			</ul>
 
-			<?php if ( ! empty($store['whatsapp_number'])): ?>
-				<a href="https://wa.me/<?= esc(rawurlencode($store['whatsapp_number']), 'attr') ?>" target="_blank" rel="noopener noreferrer"
+			<?php if ($aboutWa !== ''): ?>
+				<a href="<?= esc($aboutWa, 'attr') ?>" target="_blank" rel="noopener noreferrer"
 				   class="ds-btn ds-btn--primary mt-6">
 					Chat via WhatsApp
 				</a>

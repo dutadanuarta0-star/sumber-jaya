@@ -17,7 +17,15 @@ class Settings extends Admin_Controller {
 	public function index()
 	{
 		$this->form_validation->set_rules('store_name', 'Nama toko', 'trim|required|max_length[100]');
-		$this->form_validation->set_rules('whatsapp_number', 'Nomor WhatsApp', 'trim|required|max_length[30]|regex_match[/^[0-9+\-\s()]+$/]');
+		// Wajib mengandung angka: input seperti "+" atau "( )" akan menjadi
+		// string kosong setelah normalisasi dan membuat tautan wa.me rusak.
+		$this->form_validation->set_rules('whatsapp_number', 'Nomor WhatsApp', array(
+			'trim',
+			'required',
+			'max_length[30]',
+			'regex_match[/^[0-9+\-\s()]+$/]',
+			'regex_match[/[0-9]/]',
+		));
 		$this->form_validation->set_rules('phone', 'Telepon', 'trim|max_length[30]');
 		$this->form_validation->set_rules('address', 'Alamat', 'trim|max_length[255]');
 		$this->form_validation->set_rules('email', 'Email', 'trim|max_length[100]|valid_email');

@@ -43,6 +43,33 @@ if ( ! function_exists('rupiah'))
 	}
 }
 
+if ( ! function_exists('wa_link'))
+{
+	/**
+	 * Tautan chat WhatsApp dari nomor toko.
+	 *
+	 * Nomor dinormalisasi menjadi digit saja supaya nilai lama seperti
+	 * "+62 813-..." tetap menghasilkan tautan wa.me yang valid. Pesan
+	 * opsional ikut di-encode sebagai parameter `text`.
+	 *
+	 * @param	string $number  Nomor WhatsApp toko
+	 * @param	string $message Pesan pembuka (opsional)
+	 * @return	string Tautan wa.me, atau string kosong bila nomor tidak valid
+	 */
+	function wa_link($number, $message = '')
+	{
+		$digits = preg_replace('/[^0-9]/', '', (string) $number);
+
+		if ($digits === '')
+		{
+			return '';
+		}
+
+		return 'https://wa.me/'.$digits
+			.($message !== '' ? '?text='.rawurlencode($message) : '');
+	}
+}
+
 if ( ! function_exists('img_src'))
 {
 	/**

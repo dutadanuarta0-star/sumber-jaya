@@ -1090,18 +1090,34 @@ body.ds-scroll-lock {
 	display: none;
 }
 
-/* Tombol panah: bulat, semi transparan di atas foto. */
+/* Tombol panah: bulat, semi transparan di atas foto. Ukuran sengaja dibuat
+   besar (48px, 56px di desktop) agar mudah diklik/disentuh. */
 .ds-hero .swiper-button-prev,
 .ds-hero .swiper-button-next {
 	position: absolute;
 	top: 50%;
-	width: 44px;
-	height: 44px;
-	margin-top: -22px;
+	z-index: 10;
+	width: 48px;
+	height: 48px;
+	margin-top: -24px;
+	border: 1px solid rgba(242, 235, 221, .35);
 	border-radius: var(--radius-pill);
-	background: rgba(58, 43, 37, .60);
+	background: rgba(58, 43, 37, .72);
+	box-shadow: 0 6px 18px rgba(28, 23, 20, .25);
 	color: var(--color-text-on-green);
-	transition: background-color var(--dur-micro) var(--ease-ds);
+	cursor: pointer;
+	transition:
+		background-color var(--dur-micro) var(--ease-ds),
+		transform var(--dur-micro) var(--ease-ds);
+}
+
+@media (min-width: 768px) {
+	.ds-hero .swiper-button-prev,
+	.ds-hero .swiper-button-next {
+		width: 56px;
+		height: 56px;
+		margin-top: -28px;
+	}
 }
 
 .ds-hero .swiper-button-prev {
@@ -1114,14 +1130,31 @@ body.ds-scroll-lock {
 	right: 12px;
 }
 
+@media (min-width: 768px) {
+	.ds-hero .swiper-button-prev {
+		left: 20px;
+	}
+
+	.ds-hero .swiper-button-next {
+		right: 20px;
+	}
+}
+
 .ds-hero .swiper-button-prev:hover,
 .ds-hero .swiper-button-next:hover {
-	background: rgba(58, 43, 37, .85);
+	background: rgba(58, 43, 37, .92);
+	transform: scale(1.05);
+}
+
+.ds-hero .swiper-button-prev:focus-visible,
+.ds-hero .swiper-button-next:focus-visible {
+	outline: 2px solid var(--color-accent-mint);
+	outline-offset: 3px;
 }
 
 .ds-hero .swiper-navigation-icon {
-	width: 14px;
-	height: 26px;
+	width: 16px;
+	height: 32px;
 }
 
 /* Titik navigasi: bulat kecil, rata tengah di bawah slide.

@@ -24,6 +24,10 @@ $heroColors = array('bg-ds-forest', 'bg-ds-frame', 'bg-ds-ink');
 
 // Produk yang dipakai sebagai foto feature card hijau.
 $featureProduct = $featured ? $featured[0] : NULL;
+
+// Tautan WhatsApp (nomor dinormalisasi oleh helper wa_link()).
+$waGeneral = wa_link($store['whatsapp_number'], 'Halo '.$store['store_name'].', saya ingin bertanya tentang produk.');
+$waJoin    = wa_link($store['whatsapp_number'], 'Halo '.$store['store_name'].', saya ingin bergabung dengan Klan Kopi.');
 ?>
 
 <!-- ============ HERO (slider Swiper) ============ -->
@@ -163,7 +167,7 @@ $featureProduct = $featured ? $featured[0] : NULL;
 </section>
 
 <!-- ============ FEATURE CARD (hijau) ============ -->
-<?php if ( ! empty($store['whatsapp_number'])): ?>
+<?php if ($waGeneral !== ''): ?>
 <section class="mt-12 md:mt-16">
 	<div class="ds-feature">
 		<div>
@@ -174,7 +178,7 @@ $featureProduct = $featured ? $featured[0] : NULL;
 				Kami Roast ringan sampai sedang agar rasa-asli kopi Indonesia tetap terasa
 				di setiap cangkir.
 			</p>
-			<a href="https://wa.me/<?= esc($store['whatsapp_number'], 'attr') ?>?text=<?= rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tentang produk.') ?>"
+			<a href="<?= esc($waGeneral, 'attr') ?>"
 			   target="_blank" rel="noopener noreferrer" class="ds-btn ds-btn--light">
 				Tanya PRODUK Kami
 			</a>
@@ -219,7 +223,7 @@ $featureProduct = $featured ? $featured[0] : NULL;
 			Dapatkan kabar stok baru, jadwal roasting mingguan, dan penawaran khusus
 			lewat WhatsApp. Cukup chat &mdash; cepat dan tanpa formality.
 		</p>
-		<a href="https://wa.me/<?= esc($store['whatsapp_number'], 'attr') ?>?text=<?= rawurlencode('Halo '.$store['store_name'].', saya ingin bergabung dengan Klan Kopi.') ?>"
+		<a href="<?= esc($waJoin, 'attr') ?>"
 		   target="_blank" rel="noopener noreferrer" class="ds-btn ds-btn--primary">
 			Chat WhatsApp
 		</a>

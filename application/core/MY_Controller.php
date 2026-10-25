@@ -109,6 +109,10 @@ class Admin_Controller extends MY_Controller {
 		{
 			redirect('admin/login');
 		}
+
+		// Halaman admin berisi data sensitif: jangan disimpan di cache browser/proxy.
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+		$this->output->set_header('Pragma: no-cache');
 	}
 
 	/**

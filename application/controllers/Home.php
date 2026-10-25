@@ -52,7 +52,7 @@ class Home extends Public_Controller {
 		return array(
 			'pageTitle'  => '',
 			'useSwiper'  => TRUE,
-			'categories' => $this->Category_model->getAllWithCount(),
+			'categories' => $this->Category_model->getAllWithCount(TRUE),
 			'featured'   => $this->Product_model->getPublished(NULL, 4),
 			'heroSlides' => $this->Hero_slide_model->getActive(),
 		);

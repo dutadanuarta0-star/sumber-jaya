@@ -25,12 +25,12 @@
 	</div>
 <?php endif; ?>
 
-<?php if ( ! empty($uploadError)): ?>
+<?php if ( ! empty($formError)): ?>
 	<div class="ds-alert ds-alert--error mb-6" role="alert">
 		<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 			<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
 		</svg>
-		<span><?= esc($uploadError) ?></span>
+		<span><?= esc($formError) ?></span>
 	</div>
 <?php endif; ?>
 

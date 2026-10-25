@@ -25,8 +25,7 @@
 // Menu aktif ditentukan dari segmen URI pertama.
 $seg1    = (string) $this->uri->segment(1);
 $isHome  = ($seg1 === '' OR $seg1 === 'home' OR $seg1 === 'index' OR $seg1 === 'beranda-desktop');
-$waLink  = 'https://wa.me/'.rawurlencode((string) $store['whatsapp_number']);
-$waText  = rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tentang produk.');
+$waLink  = wa_link($store['whatsapp_number'], 'Halo '.$store['store_name'].', saya ingin bertanya tentang produk.');
 ?>
 
 <header class="sticky top-0 z-40 border-b border-ds-line bg-ds-page/90 backdrop-blur">
@@ -56,8 +55,8 @@ $waText  = rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tent
 					       class="ds-input ds-input--sm w-44 xl:w-56">
 				</form>
 
-				<?php if ( ! empty($store['whatsapp_number'])): ?>
-					<a href="<?= esc($waLink.'?'.$waText, 'attr') ?>" target="_blank" rel="noopener noreferrer" class="ds-nav-link hidden lg:inline-flex">
+				<?php if ($waLink !== ''): ?>
+					<a href="<?= esc($waLink, 'attr') ?>" target="_blank" rel="noopener noreferrer" class="ds-nav-link hidden lg:inline-flex">
 						WhatsApp
 					</a>
 				<?php endif; ?>
@@ -122,8 +121,8 @@ $waText  = rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tent
 		</form>
 
 		<div class="border-t border-ds-line pt-4">
-			<?php if ( ! empty($store['whatsapp_number'])): ?>
-				<a href="<?= esc($waLink.'?'.$waText, 'attr') ?>" target="_blank" rel="noopener noreferrer" class="ds-btn ds-btn--primary ds-btn--block mb-2">
+			<?php if ($waLink !== ''): ?>
+				<a href="<?= esc($waLink, 'attr') ?>" target="_blank" rel="noopener noreferrer" class="ds-btn ds-btn--primary ds-btn--block mb-2">
 					Chat WhatsApp
 				</a>
 			<?php endif; ?>

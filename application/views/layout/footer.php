@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php $waHref = wa_link($store['whatsapp_number'], 'Halo '.$store['store_name'].', saya ingin bertanya tentang produk.'); ?>
 	</div>
 </main>
 
@@ -53,10 +54,10 @@
 	</div>
 </footer>
 
-<?php if ( ! empty($store['whatsapp_number'])): ?>
+<?php if ($waHref !== ''): ?>
 <!-- Tombol chat WhatsApp mengambang (nomor dari menu Pengaturan).
      Warna mengikuti palet design system: hijau hutan, bukan hijau brand WA. -->
-<a href="https://wa.me/<?= esc($store['whatsapp_number'], 'attr') ?>?text=<?= rawurlencode('Halo '.$store['store_name'].', saya ingin bertanya tentang produk.') ?>"
+<a href="<?= esc($waHref, 'attr') ?>"
    target="_blank" rel="noopener"
    aria-label="Chat WhatsApp dengan <?= esc($store['store_name'], 'attr') ?>"
    class="ds-btn ds-btn--primary fixed bottom-5 right-5 z-50 h-14 w-14 !px-0 shadow-ds-md sm:h-auto sm:w-auto sm:!px-5">

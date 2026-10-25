@@ -1,9 +1,40 @@
 RewriteEngine On
 
+# Jangan tampilkan daftar isi folder (mis. /tools/).
+<IfModule mod_autoindex.c>
+	Options -Indexes
+</IfModule>
+
 # Block direct access to all dotfiles (.env, .gitignore, .htaccess, ...)
 <FilesMatch "^\.">
 	Require all denied
 </FilesMatch>
+
+# Block metadata Git. File di dalam folder .git (config, index, objects, ...)
+# tidak tertangkap aturan dotfile di atas karena nama filenya tidak diawali titik.
+RewriteRule (^|/)\.git(/|$) - [F,L,NC]
+
+# Folder alat bantu pengembangan tidak boleh diakses dari web.
+RewriteRule ^tools(/|$) - [F,L,NC]
+
+# Berkas sisa pengujian lokal (berisi cookie/session/CSRF) — jangan pernah
+# disajikan Apache bila masih ada di server.
+<FilesMatch "^(diag\.php|c2\.txt|cj\.txt|rl\.txt|cart\.html|rl\.html)$">
+	<IfModule authz_core_module>
+		Require all denied
+	</IfModule>
+	<IfModule !authz_core_module>
+		Order allow,deny
+		Deny from all
+	</IfModule>
+</FilesMatch>
+
+# Header keamanan dasar (tidak mengubah tampilan).
+<IfModule mod_headers.c>
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set X-Frame-Options "SAMEORIGIN"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
 
 # Block direct access to sensitive files: database.sql, *.md, logs, dumps, etc.
 <FilesMatch "\.(sql|md|markdown|log|bak|old|orig|swp|dist|ini|sh|lock|yml|yaml|json)$">

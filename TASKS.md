@@ -182,3 +182,52 @@ tidak ada perubahan controller/model/library/`config/`/`system/`/`database.sql`.
   halaman tetap utuh (diuji dengan memblokir `cdn.jsdelivr.net`)
 - [x] `tools/verify.js` diperbarui: menunggu event `Page.loadEventFired` (bukan sleep tetap)
   supaya halaman beranda tidak diukur sebelum Swiper termuat — 30 pemeriksaan lulus, tanpa error konsol
+- [x] Perbaikan: slider sempat terkunci (panah, autoplay, dan drag tidak berfungsi) karena CSS
+  fallback menyembunyikan slide (`display: none`) saat init sehingga Swiper mengukur lebar 0 —
+  `init` kini melepas kelas fallback lebih dulu lalu memanggil `swiper.update()`
+  (diuji: `isLocked` false, tombol next pindah slide, autoplay berjalan)
+- [x] Navigasi kiri/kanan dibuat lebih mudah: panah 48px (56px desktop) dengan latar lebih pekat,
+  garis tepi, bayangan, dan focus ring; geser horizontal eksplisit (`effect: slide`,
+  `slidesPerView: 1`, `simulateTouch`, `longSwipesRatio: 0.25`) sehingga bisa di-drag dengan mouse
+  maupun sentuhan dan geseran singkat sudah pindah slide
+
+## 13. Audit keamanan & fungsional admin
+
+- [x] Audit akses: semua halaman admin tanpa login dialihkan ke `admin/login`; CSRF aktif di semua
+  form POST; POST tanpa token ditolak 403; rate limit 5 percobaan gagal / 15 menit bekerja
+- [x] Perbaikan kebocoran: folder `.git/` dan `tools/` diblokir dari web, directory listing dimatikan,
+  berkas sisa uji (`diag.php`, `c2.txt`, `cj.txt`, `rl.txt`, `cart.html`, `rl.html`) dihapus
+- [x] Header keamanan dasar (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`) dan
+  `Cache-Control: no-store` untuk halaman admin/login
+- [x] Session: `sess_regenerate_destroy = TRUE`; cookie `Secure` otomatis saat HTTPS, `HttpOnly` aktif
+- [x] Integritas produk: produk wajib punya minimal 1 varian (dicek di controller & model); upload
+  gambar divalidasi sebelum file disimpan
+- [x] Validasi: nomor WhatsApp wajib mengandung angka; `sort_order` slider boleh kosong (= 0)
+- [x] Uji otomatis 28 pemeriksaan: login/CSRF, CRUD produk/kategori/slider, guard hapus kategori,
+  pengaturan, akun, upload file PHP menyamar sebagai JPG (ditolak) — semua lulus
+- [x] `node tools/verify.js` dengan login admin: 30 pemeriksaan tampilan + 7 halaman admin lulus,
+  tanpa error konsol
+- [ ] **Tindakan pemilik:** password admin masih `admin123` — segera ganti lewat `admin/akun`
+
+## 14. Audit fungsional sisi pelanggan
+
+- [x] Audit alur publik: beranda, katalog + filter kategori + pencarian, detail produk, keranjang,
+  update/hapus item, dan checkout WhatsApp (redirect `wa.me` berisi daftar pesanan + subtotal)
+- [x] Perbaikan tautan WhatsApp di header/drawer: parameter pesan memakai `?text=` (sebelumnya
+  `?Halo%20...` sehingga pesan tidak terisi). Semua tautan WA kini lewat helper `wa_link()` yang
+  menormalkan nomor menjadi digit dan meng-encode pesan; tautan kosong tidak dirender
+- [x] Perbaikan halaman "Tentang Kami": blok kontak + tombol WhatsApp tetap tampil bila toko hanya
+  mengisi nomor WhatsApp (tanpa alamat/telepon/email)
+- [x] Perbaikan detail produk: varian pertama yang **masih ada stok** dipilih otomatis; sebelumnya
+  bila varian termurah habis tidak ada radio yang tercentang dan form bisa terkirim tanpa varian.
+  Radio stok tersedia kini `required`
+- [x] Perbaikan keranjang: update jumlah pada varian stok habis tidak lagi menyimpan jumlah 1
+  (item dihapus dengan pesan yang sesuai); form update disembunyikan untuk item stok habis;
+  item session tanpa jumlah dibuang; checkout melewati item berjumlah 0
+- [x] Perbaikan notifikasi keranjang: flash "Sebagian isi keranjang disesuaikan..." hanya muncul
+  saat ada perubahan nyata (tidak berulang setiap halaman dimuat)
+- [x] Perbaikan hitungan produk pada kartu kategori beranda: hanya produk aktif yang dihitung
+  (halaman admin tetap menghitung semua produk)
+- [x] Verifikasi: lint PHP semua berkas yang diubah; uji manual tambah/update/hapus/checkout;
+  skenario varian pertama habis; skenario stok berubah menjadi 0; `node tools/verify.js`
+  30 pemeriksaan tampilan lulus tanpa error konsol

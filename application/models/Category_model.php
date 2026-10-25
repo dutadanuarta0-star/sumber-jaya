@@ -17,15 +17,23 @@ class Category_model extends CI_Model {
 	}
 
 	/**
-	 * Semua kategori + jumlah produknya (untuk halaman admin).
+	 * Semua kategori + jumlah produknya.
 	 *
+	 * @param	bool $activeOnly Hitung hanya produk aktif (untuk halaman publik)
 	 * @return	array
 	 */
-	public function getAllWithCount()
+	public function getAllWithCount($activeOnly = FALSE)
 	{
+		$join = 'products.category_id = categories.id';
+
+		if ($activeOnly)
+		{
+			$join .= ' AND products.is_active = 1';
+		}
+
 		return $this->db
 			->select('categories.*, COUNT(products.id) AS product_count', FALSE)
-			->join('products', 'products.category_id = categories.id', 'left')
+			->join('products', $join, 'left')
 			->group_by('categories.id')
 			->order_by('categories.name', 'ASC')
 			->get('categories')

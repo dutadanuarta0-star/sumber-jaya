@@ -30,18 +30,20 @@
 					</div>
 
 					<div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-ds-line pt-4">
-						<form action="<?= site_url('cart/update') ?>" method="post" class="flex flex-wrap items-end gap-2">
-							<?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>
-							<?= form_hidden('variant_id', $item['variantId']) ?>
-							<div>
-								<label for="qty-<?= (int) $item['variantId'] ?>" class="ds-label-text">Jumlah</label>
-								<input type="number" id="qty-<?= (int) $item['variantId'] ?>" name="qty" value="<?= (int) $item['qty'] ?>"
-								       min="0" max="<?= min((int) $item['stock'], (int) $maxQty) ?>"
-								       class="ds-input ds-input--sm w-24">
-							</div>
-							<button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">Perbarui</button>
-							<span class="ds-caption pb-2 text-ds-ink-soft">stok: <?= (int) $item['stock'] ?></span>
-						</form>
+						<?php if ((int) $item['stock'] > 0): ?>
+							<form action="<?= site_url('cart/update') ?>" method="post" class="flex flex-wrap items-end gap-2">
+								<?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>
+								<?= form_hidden('variant_id', $item['variantId']) ?>
+								<div>
+									<label for="qty-<?= (int) $item['variantId'] ?>" class="ds-label-text">Jumlah</label>
+									<input type="number" id="qty-<?= (int) $item['variantId'] ?>" name="qty" value="<?= (int) $item['qty'] ?>"
+									       min="0" max="<?= min((int) $item['stock'], (int) $maxQty) ?>"
+									       class="ds-input ds-input--sm w-24">
+								</div>
+								<button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">Perbarui</button>
+								<span class="ds-caption pb-2 text-ds-ink-soft">stok: <?= (int) $item['stock'] ?></span>
+							</form>
+						<?php endif ?>
 
 						<form action="<?= site_url('cart/remove') ?>" method="post">
 							<?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>

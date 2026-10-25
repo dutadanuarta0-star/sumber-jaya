@@ -16,6 +16,10 @@ class Login extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->model('Admin_model');
+
+		// Form login berisi token CSRF: jangan di-cache browser/proxy.
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+		$this->output->set_header('Pragma: no-cache');
 	}
 
 	public function index()
